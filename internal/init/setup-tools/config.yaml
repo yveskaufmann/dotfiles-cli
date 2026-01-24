@@ -1,0 +1,72 @@
+dependencies:
+  - name: system-tools
+    profile: default
+    systems: all | linux | macos | windows | ubuntu
+    apt: 
+        - git
+        - curl
+        - wget
+        - build-essential
+        - python3
+        - python3-pip
+        - https://api.k8slens.dev/binaries/Lens-2022.12.201157-latest.amd64.deb 
+
+   
+    ppa:
+      - name: google-cloud-sdk
+        key: https://packages.cloud.google.com/apt/doc/apt-key.gpg  
+        url: https://packages.cloud.google.com/apt 
+        suites: cloud-sdk 
+        components: main
+        packages:
+          - google-cloud-cli
+      
+      - name: 1password-cli
+        key: https://downloads.1password.com/linux/keys/1password.asc 
+        url: https://downloads.1password.com/linux/debian/{architecture}/
+        suites: stable # If omitted, defaults to "stable" 
+        components: main # If omitted, defaults to "main"
+        packages:
+          - 1password-cli
+    snap:
+      - docker
+      - kubectl
+      - helm
+  
+    pipx: 
+      - name: pipenv
+      - name: ipython
+      - name: jupyter 
+      - name: uv
+
+    script:
+      - name: compile-git
+        script: ./scripts/compile-git.sh
+    
+    custom: 
+      - name: SdkMan
+
+        installCheck: 
+          binary: sdk
+          directory: $HOME/.sdkman
+
+        install: | 
+          curl -s get.sdkman.io | bash
+          source "$HOME/.sdkman/bin/sdkman-init.sh"
+        
+        update: |
+          source "$HOME/.sdkman/bin/sdkman-init.sh"
+          sdk selfupdate
+      
+      - name: compile-git 
+        script: ./scripts/compile-git.sh
+  
+  - name: nodejs-tools
+    profile: work
+    systems: all | linux | macos | windows | ubuntu
+    npm:
+      - name: typescript
+      - name: eslint
+      - name: prettier
+      - name: nodemon
+    
