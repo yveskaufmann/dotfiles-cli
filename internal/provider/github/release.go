@@ -21,7 +21,13 @@ type githubRelease struct {
 func (p *Provider) fetchReleaseInfo(spec config.GithubSpec) (*githubRelease, error) {
 	url := fmt.Sprintf("https://api.github.com/repos/%s/releases/latest", spec.Repo)
 	if spec.Version != "" && spec.Version != "latest" {
-		url = fmt.Sprintf("https://api.github.com/repos/%s/releases/tags/v%s", spec.Repo, spec.Version)
+
+		version := spec.Version
+		if matched, _ := regexp.MatchString(`^\d+(\.\d+)*$`, spec.Version); matched {
+			version = "v" + spec.Version
+		}
+
+		url = fmt.Sprintf("https://api.github.com/repos/%s/releases/tags/%s", spec.Repo, version)
 	}
 
 	resp, err := http.Get(url)
