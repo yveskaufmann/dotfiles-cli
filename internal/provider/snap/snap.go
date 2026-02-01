@@ -20,6 +20,10 @@ func (p *Provider) ID() string {
 	return "snap"
 }
 
+func (p *Provider) Priority() int {
+	return 100 // Default priority
+}
+
 func (p *Provider) Install(group config.DependencyGroup, onComplete types.OnTaskComplete) error {
 	// Skip if no snap packages defined
 	if len(group.Snap) == 0 {

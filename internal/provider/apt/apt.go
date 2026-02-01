@@ -27,6 +27,10 @@ func (p *Provider) ID() string {
 	return "apt"
 }
 
+func (p *Provider) Priority() int {
+	return 10 // System package manager - high priority
+}
+
 func (p *Provider) Setup() error {
 	// Skip if not Linux
 	if !osutil.IsLinux() {

@@ -6,6 +6,13 @@ type Provider interface {
 	// Identifier returns the unique identifier of the provider (e.g., "github", "gitlab").
 	ID() string
 
+	// Priority returns the execution priority of the provider.
+	// Lower numbers execute first. Typical values:
+	// - 10: System package managers (apt, brew)
+	// - 50: Version managers (nvm, sdkman)
+	// - 100: Application installers (default)
+	Priority() int
+
 	// Install the installation of dependency group and returns a task Result.
 	Install(config config.DependencyGroup, onComplete OnTaskComplete) error
 }

@@ -39,7 +39,7 @@ func init() {
 	rootCmd.PersistentFlags().BoolP("init-only", "i", false, "Executes only the init scripts steps, skipping symlink creation.")
 	rootCmd.Flags().BoolP("pull-only", "p", false, "Only pull dotfiles changes from the remote repository.")
 	rootCmd.PersistentFlags().StringP("profile", "P", "default", "The setup profile to use (e.g., 'default', 'work').")
-
+	rootCmd.PersistentFlags().StringSliceP("providers", "", []string{}, "Comma-separated list of providers to enable (e.g., 'nvm,apt'). If empty, all providers are enabled.")
 }
 
 func Execute() {
@@ -97,6 +97,7 @@ func Bootstrap(cmd *cobra.Command) {
 
 func runInitScripts(cmd *cobra.Command, initOnly bool) error {
 	profile, _ := cmd.Flags().GetString("profile")
+	enabledProviders, _ := cmd.Flags().GetStringSlice("providers")
 
 	fmt.Printf("📦 Initializing system (Profile: %s)...\n", profile)
 
@@ -107,6 +108,12 @@ func runInitScripts(cmd *cobra.Command, initOnly bool) error {
 	}
 
 	executor := executor.NewToolInstallExecutor(cfg)
+	executor.SetEnabledProviders(enabledProviders)
+
+	if err := executor.Setup(); err != nil {
+		return fmt.Errorf("failed to setup providers: %w", err)
+	}
+
 	if err := executor.Execute(); err != nil {
 		return fmt.Errorf("bootstrap failed during tool installation: %w", err)
 	}

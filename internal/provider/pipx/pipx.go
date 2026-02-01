@@ -19,6 +19,10 @@ func (p *Provider) ID() string {
 	return "pipx"
 }
 
+func (p *Provider) Priority() int {
+	return 100 // Default priority
+}
+
 func (p *Provider) Setup() error {
 	if sh.IsBinaryOnPath("pipx") {
 		return nil

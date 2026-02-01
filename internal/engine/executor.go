@@ -10,16 +10,44 @@ import (
 )
 
 type ToolInstallExecutor struct {
-	Groups    []config.DependencyGroup
-	Providers *provider.Registry
+	Groups           []config.DependencyGroup
+	Providers        *provider.Registry
+	EnabledProviders map[string]bool
 }
 
 func NewToolInstallExecutor(config *config.Config) *ToolInstallExecutor {
-	return &ToolInstallExecutor{Groups: config.Groups, Providers: provider.NewRegistry()}
+	return &ToolInstallExecutor{
+		Groups:           config.Groups,
+		Providers:        provider.NewRegistry(),
+		EnabledProviders: nil, // nil means all enabled
+	}
+}
+
+func (e *ToolInstallExecutor) SetEnabledProviders(providers []string) {
+	if len(providers) == 0 {
+		e.EnabledProviders = nil
+		return
+	}
+
+	e.EnabledProviders = make(map[string]bool)
+	for _, p := range providers {
+		e.EnabledProviders[p] = true
+	}
+}
+
+func (e *ToolInstallExecutor) isProviderEnabled(providerID string) bool {
+	if e.EnabledProviders == nil {
+		return true
+	}
+	return e.EnabledProviders[providerID]
 }
 
 func (e *ToolInstallExecutor) Setup() error {
 	for _, providerInstance := range e.Providers.List() {
+		if !e.isProviderEnabled(providerInstance.ID()) {
+			continue
+		}
+
 		if setupable, ok := providerInstance.(types.Setupable); ok {
 			if err := setupable.Setup(); err != nil {
 				return fmt.Errorf("failed to setup provider %s: %w", providerInstance.ID(), err)
@@ -48,6 +76,9 @@ func (e *ToolInstallExecutor) Execute() error {
 func (e *ToolInstallExecutor) executeGroup(group config.DependencyGroup) error {
 
 	for _, providerInstance := range e.Providers.List() {
+		if !e.isProviderEnabled(providerInstance.ID()) {
+			continue
+		}
 
 		onProgress := func(result types.TaskResult) {
 			switch result.Status {

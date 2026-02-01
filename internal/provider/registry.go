@@ -1,6 +1,8 @@
 package provider
 
 import (
+	"sort"
+
 	"yv35.com/dotfiles/internal/provider/apt"
 	"yv35.com/dotfiles/internal/provider/binary"
 	"yv35.com/dotfiles/internal/provider/brew"
@@ -8,8 +10,10 @@ import (
 	"yv35.com/dotfiles/internal/provider/example"
 	"yv35.com/dotfiles/internal/provider/github"
 	"yv35.com/dotfiles/internal/provider/npm"
+	"yv35.com/dotfiles/internal/provider/nvm"
 	"yv35.com/dotfiles/internal/provider/pipx"
 	"yv35.com/dotfiles/internal/provider/script"
+	"yv35.com/dotfiles/internal/provider/sdkman"
 	"yv35.com/dotfiles/internal/provider/snap"
 	"yv35.com/dotfiles/internal/types"
 )
@@ -31,6 +35,8 @@ func NewRegistry() *Registry {
 			"apt":     apt.NewProvider(),
 			"script":  script.NewProvider(),
 			"custom":  custom.NewProvider(),
+			"nvm":     nvm.NewProvider(),
+			"sdkman":  sdkman.NewProvider(),
 		},
 	}
 }
@@ -49,5 +55,11 @@ func (r *Registry) List() []types.Provider {
 	for _, provider := range r.Providers {
 		providers = append(providers, provider)
 	}
+
+	// Sort by priority (lower numbers first)
+	sort.Slice(providers, func(i, j int) bool {
+		return providers[i].Priority() < providers[j].Priority()
+	})
+
 	return providers
 }

@@ -1,6 +1,11 @@
 package config
 
-import "gopkg.in/yaml.v3"
+import (
+	"fmt"
+	"strings"
+
+	"gopkg.in/yaml.v3"
+)
 
 type Config struct {
 	Schema string            `yaml:"$schema,omitempty"`
@@ -22,6 +27,8 @@ type DependencyGroup struct {
 	Binary      []BinarySpec  `yaml:"binary,omitempty"`
 	Script      []ScriptSpec  `yaml:"script,omitempty"`
 	Custom      []CustomSpec  `yaml:"custom,omitempty"`
+	NVM         []NVMSpec     `yaml:"nvm,omitempty"`
+	Sdkman      []SdkmanSpec  `yaml:"sdkman,omitempty"`
 }
 
 type PPASpec struct {
@@ -123,4 +130,31 @@ type CustomSpec struct {
 	Install      string `yaml:"install"`
 	Update       string `yaml:"update,omitempty"`
 	InstallCheck string `yaml:"installCheck,omitempty"`
+}
+
+type NVMSpec struct {
+	Default  string   `yaml:"default"`
+	Versions []string `yaml:"versions,omitempty"`
+}
+
+type SdkmanSpec struct {
+	Candidate string   `yaml:"candidate,omitempty"`
+	Version   string   `yaml:"version,omitempty"`
+	Versions  []string `yaml:"versions,omitempty"`
+}
+
+func (s *SdkmanSpec) UnmarshalYAML(node *yaml.Node) error {
+	if node.Kind == yaml.ScalarNode {
+		// Parse "candidate:version" format
+		parts := strings.SplitN(node.Value, ":", 2)
+		if len(parts) != 2 {
+			return fmt.Errorf("invalid sdkman spec format: %s (expected candidate:version)", node.Value)
+		}
+		s.Candidate = parts[0]
+		s.Version = parts[1]
+		return nil
+	}
+
+	type alias SdkmanSpec
+	return node.Decode((*alias)(s))
 }

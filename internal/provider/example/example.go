@@ -22,6 +22,10 @@ func (p *Provider) ID() string {
 	return "example"
 }
 
+func (p *Provider) Priority() int {
+	return 100 // Default priority
+}
+
 func (p *Provider) Setup() error {
 	fmt.Println("Setting up ExampleProvider...")
 	return nil
