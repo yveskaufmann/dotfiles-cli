@@ -1,24 +1,27 @@
-package setuptools
+package config
 
 import "gopkg.in/yaml.v3"
 
 type Config struct {
-	Groups []Group `yaml:"groups"`
+	Schema string            `yaml:"$schema,omitempty"`
+	Groups []DependencyGroup `yaml:"groups"`
 }
 
-type Group struct {
-	Name    string       `yaml:"name"`
-	Profile string       `yaml:"profile,omitempty"`
-	Systems string       `yaml:"systems,omitempty"`
-	Apt     []string     `yaml:"apt,omitempty"`
-	PPA     []PPASpec    `yaml:"ppa,omitempty"`
-	Snap    []SnapSpec   `yaml:"snap,omitempty"`
-	Pipx    []PipxSpec   `yaml:"pipx,omitempty"`
-	NPM     []NPMSpec    `yaml:"npm,omitempty"`
-	Github  []GithubSpec `yaml:"github_release,omitempty"`
-	Binary  []BinarySpec `yaml:"binary,omitempty"`
-	Script  []ScriptSpec `yaml:"script,omitempty"`
-	Custom  []CustomSpec `yaml:"custom,omitempty"`
+type DependencyGroup struct {
+	Name        string        `yaml:"name"`
+	Profile     string        `yaml:"profile,omitempty"`
+	Systems     string        `yaml:"systems,omitempty"`
+	Apt         []string      `yaml:"apt,omitempty"`
+	PPA         []PPASpec     `yaml:"ppa,omitempty"`
+	Snap        []SnapSpec    `yaml:"snap,omitempty"`
+	Pipx        []PipxSpec    `yaml:"pipx,omitempty"`
+	NPM         []NPMSpec     `yaml:"npm,omitempty"`
+	Brew        []BrewSpec    `yaml:"brew,omitempty"`
+	BrewTapSpec []BrewTapSpec `yaml:"brew_taps,omitempty"`
+	Github      []GithubSpec  `yaml:"github_release,omitempty"`
+	Binary      []BinarySpec  `yaml:"binary,omitempty"`
+	Script      []ScriptSpec  `yaml:"script,omitempty"`
+	Custom      []CustomSpec  `yaml:"custom,omitempty"`
 }
 
 type PPASpec struct {
@@ -70,6 +73,25 @@ func (n *NPMSpec) UnmarshalYAML(node *yaml.Node) error {
 	}
 	type alias NPMSpec
 	return node.Decode((*alias)(n))
+}
+
+type BrewTapSpec struct {
+	Name string     `yaml:"name"`
+	URL  *string    `yaml:"url,omitempty"`
+	Pkgs []BrewSpec `yaml:"pkgs,omitempty"`
+}
+
+type BrewSpec struct {
+	Name string `yaml:"name"`
+	Cask bool   `yaml:"cask,omitempty"`
+}
+
+func (b *BrewSpec) UnmarshalYAML(node *yaml.Node) error {
+	if node.Kind == yaml.ScalarNode {
+		return node.Decode(&b.Name)
+	}
+	type alias BrewSpec
+	return node.Decode((*alias)(b))
 }
 
 type GithubSpec struct {

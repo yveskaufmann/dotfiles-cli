@@ -1,9 +1,10 @@
-package tools
+package sh
 
 import (
 	"context"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"time"
 )
 
@@ -33,4 +34,18 @@ func RunShellOutput(cmd string) (string, error) {
 	c := exec.CommandContext(ctx, "bash", "-lc", cmd)
 	b, err := c.Output()
 	return string(b), err
+}
+
+func RunScript(path string) error {
+	// If path is relative, try to resolve it relative to $DOTFILES
+	if !filepath.IsAbs(path) {
+		dotfiles := os.Getenv("DOTFILES")
+		if dotfiles != "" {
+			fullPath := filepath.Join(dotfiles, path)
+			if _, err := os.Stat(fullPath); err == nil {
+				path = fullPath
+			}
+		}
+	}
+	return RunShell(path)
 }

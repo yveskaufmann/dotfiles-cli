@@ -1,4 +1,4 @@
-package tools
+package github
 
 import (
 	"encoding/json"
@@ -7,6 +7,9 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+
+	"yv35.com/dotfiles/internal/tool"
+	"yv35.com/dotfiles/internal/util/sh"
 )
 
 type githubRelease struct {
@@ -17,12 +20,13 @@ type githubRelease struct {
 	} `json:"assets"`
 }
 
+// InstallGithubRelease installs a binary from a GitHub release.
 func InstallGithubRelease(name, repo, version, pattern, binaryPath, installPath string, binaries []string) error {
 	// Check if already installed
 	if len(binaries) > 0 {
 		allInstalled := true
 		for _, b := range binaries {
-			if err := RunShell("type " + b + " > /dev/null 2>&1"); err != nil {
+			if err := sh.RunShell("type " + b + " > /dev/null 2>&1"); err != nil {
 				allInstalled = false
 				break
 			}
@@ -31,7 +35,7 @@ func InstallGithubRelease(name, repo, version, pattern, binaryPath, installPath 
 			fmt.Printf("✅ Binaries %v are already installed\n", binaries)
 			return nil
 		}
-	} else if err := RunShell("type " + name + " > /dev/null 2>&1"); err == nil {
+	} else if err := sh.RunShell("type " + name + " > /dev/null 2>&1"); err == nil {
 		fmt.Printf("✅ %s is already installed (type check passed)\n", name)
 		return nil
 	}
@@ -40,7 +44,7 @@ func InstallGithubRelease(name, repo, version, pattern, binaryPath, installPath 
 
 	url := fmt.Sprintf("https://api.github.com/repos/%s/releases/latest", repo)
 	if version != "" && version != "latest" {
-		url = fmt.Sprintf("https://api.github.com/repos/%s/releases/tags/%s", repo, version)
+		url = fmt.Sprintf("https://api.github.com/repos/%s/releases/tags/v%s", repo, version)
 	}
 
 	resp, err := http.Get(url)
@@ -79,13 +83,13 @@ func InstallGithubRelease(name, repo, version, pattern, binaryPath, installPath 
 	defer os.Remove(tmpFile)
 
 	fmt.Printf("⬇️  Downloading %s...\n", downloadURL)
-	if err := RunShell(fmt.Sprintf("curl -L -sS -o %s %s", tmpFile, downloadURL)); err != nil {
+	if err := sh.RunShell(fmt.Sprintf("curl -L -sS -o %s %s", tmpFile, downloadURL)); err != nil {
 		return fmt.Errorf("failed to download asset: %w", err)
 	}
 
 	if len(binaries) > 0 {
-		return InstallMultipleFromArchive(binaries, tmpFile, installPath)
+		return tool.InstallMultipleFromArchive(binaries, tmpFile, installPath)
 	}
 
-	return InstallFromArchiveOrBinary(name, tmpFile, binaryPath, installPath)
+	return tool.InstallFromArchiveOrBinary(name, tmpFile, binaryPath, installPath)
 }

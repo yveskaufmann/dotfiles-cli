@@ -1,19 +1,60 @@
 //go:build linux
 
-package tools
+package tool
 
 import (
 	"fmt"
 	"os"
 	"strings"
+
+	"yv35.com/dotfiles/internal/util/sh"
 )
 
-func InstallAptPackages(packages []string) error {
-	for _, pkg := range packages {
-		if err := Install(pkg); err != nil {
-			return err
+var aptUpdated = false
+
+func ensureAptUpdate(force bool) error {
+	if !aptUpdated || force {
+		fmt.Println("⚙️  Updating apt index...")
+		if err := sh.Run("sudo", "apt", "update"); err != nil {
+			return fmt.Errorf("failed to update apt index: %w", err)
 		}
+		aptUpdated = true
 	}
+	return nil
+}
+
+func InstallAptPackages(packages []string) error {
+	var toInstall []string
+	for _, pkg := range packages {
+		if isURL(pkg) {
+			if err := installDebFromURL(pkg); err != nil {
+				return err
+			}
+			continue
+		}
+
+		if isAptInstalled(pkg) {
+			fmt.Printf("✅ Apt package %s is already installed\n", pkg)
+			continue
+		}
+		toInstall = append(toInstall, pkg)
+	}
+
+	if len(toInstall) == 0 {
+		return nil
+	}
+
+	if err := ensureAptUpdate(false); err != nil {
+		return err
+	}
+
+	fmt.Printf("⚙️  Installing apt packages: %s\n", strings.Join(toInstall, " "))
+	args := append([]string{"apt", "install", "-y"}, toInstall...)
+	err := sh.Run("sudo", args...)
+	if err != nil {
+		return fmt.Errorf("❌ Failed to install packages via apt: %w", err)
+	}
+	fmt.Printf("✅ Apt packages installed successfully: %s\n", strings.Join(toInstall, ", "))
 	return nil
 }
 
@@ -28,8 +69,12 @@ func Install(pkg string) error {
 		return nil
 	}
 
+	if err := ensureAptUpdate(false); err != nil {
+		return err
+	}
+
 	fmt.Printf("⚙️  Installing apt package: %s\n", pkg)
-	err := Run("sudo", "apt", "install", "-y", pkg)
+	err := sh.Run("sudo", "apt", "install", "-y", pkg)
 	if err != nil {
 		return fmt.Errorf("❌ Failed to install %s via apt: %w", pkg, err)
 	}
@@ -40,7 +85,7 @@ func Install(pkg string) error {
 func isAptInstalled(pkg string) bool {
 	// dpkg-query -W --showformat='${Status}\n' $pkg 2>/dev/null | grep 'install ok installed'
 	cmd := fmt.Sprintf("dpkg-query -W --showformat='${Status}\\n' %s 2>/dev/null | grep 'install ok installed'", pkg)
-	return RunShell(cmd) == nil
+	return sh.RunShell(cmd) == nil
 }
 
 func isURL(s string) bool {
@@ -56,10 +101,11 @@ func InstallPPA(name, keyURL, keyServer, keyID, uri, suites, components string, 
 	// 2. Default values
 	if suites == "" {
 		// Try to get Ubuntu codename if suites is empty
-		if out, err := RunShellOutput("lsb_release -cs"); err == nil {
+		if out, err := sh.RunShellOutput("grep VERSION_CODENAME /etc/os-release | cut -d= -f2"); err == nil {
 			suites = strings.TrimSpace(out)
 		} else {
 			suites = "stable"
+			fmt.Printf("⚠️  Unable to determine Ubuntu codename, defaulting suites to 'stable': %v\n", err)
 		}
 	}
 	if components == "" {
@@ -86,18 +132,18 @@ func InstallPPA(name, keyURL, keyServer, keyID, uri, suites, components string, 
 		if _, err := os.Stat(keyringPath); os.IsNotExist(err) {
 			if keyURL != "" {
 				fmt.Printf("⚙️  Downloading GPG key: %s\n", keyURL)
-				if strings.HasSuffix(keyURL, ".asc") {
-					if err := RunShell(fmt.Sprintf("curl -sS %s | sudo gpg --dearmor --yes --output %s", keyURL, keyringPath)); err != nil {
+				if strings.HasSuffix(keyURL, ".asc") || !strings.HasSuffix(keyURL, ".gpg") {
+					if err := sh.RunShell(fmt.Sprintf("curl -sSL %s | sudo gpg --dearmor --yes --output %s", keyURL, keyringPath)); err != nil {
 						return fmt.Errorf("failed to download and dearmor GPG key %s: %w", keyURL, err)
 					}
 				} else {
-					if err := RunShell(fmt.Sprintf("curl -sS %s | sudo tee %s > /dev/null", keyURL, keyringPath)); err != nil {
+					if err := sh.RunShell(fmt.Sprintf("curl -sS %s | sudo tee %s > /dev/null", keyURL, keyringPath)); err != nil {
 						return fmt.Errorf("failed to download GPG key %s: %w", keyURL, err)
 					}
 				}
 			} else if keyServer != "" && keyID != "" {
 				fmt.Printf("⚙️  Downloading GPG key from server: %s (ID: %s)\n", keyServer, keyID)
-				if err := RunShell(fmt.Sprintf("sudo gpg --no-default-keyring --keyring %s --keyserver %s --recv-keys %s", keyringPath, keyServer, keyID)); err != nil {
+				if err := sh.RunShell(fmt.Sprintf("sudo gpg --no-default-keyring --keyring %s --keyserver %s --recv-keys %s", keyringPath, keyServer, keyID)); err != nil {
 					return fmt.Errorf("failed to download GPG key from server %s: %w", keyServer, err)
 				}
 			}
@@ -125,7 +171,7 @@ func InstallPPA(name, keyURL, keyServer, keyID, uri, suites, components string, 
 
 		// Get architecture
 		arch := "amd64"
-		if out, err := RunShellOutput("dpkg --print-architecture"); err == nil {
+		if out, err := sh.RunShellOutput("dpkg --print-architecture"); err == nil {
 			arch = strings.TrimSpace(out)
 		}
 
@@ -142,17 +188,19 @@ Architectures: %s
 			sourceContent += fmt.Sprintf("Signed-By: %s\n", keyringPath)
 		}
 
+		fmt.Printf("%s\n", sourceContent)
+
 		// Write to temp file and move to /etc/apt/sources.list.d/
 		tmpFile := "/tmp/" + sourceName + ".sources"
 		if err := os.WriteFile(tmpFile, []byte(sourceContent), 0644); err != nil {
 			return fmt.Errorf("failed to create temp sources file: %w", err)
 		}
 
-		if err := Run("sudo", "mv", tmpFile, sourcesPath); err != nil {
+		if err := sh.Run("sudo", "mv", tmpFile, sourcesPath); err != nil {
 			return fmt.Errorf("failed to move sources file to /etc/apt/sources.list.d/: %w", err)
 		}
 
-		if err := Run("sudo", "apt", "update"); err != nil {
+		if err := ensureAptUpdate(true); err != nil {
 			return fmt.Errorf("failed to update apt after adding ppa %s: %w", name, err)
 		}
 	}
@@ -163,8 +211,13 @@ Architectures: %s
 
 func installDebFromURL(url string) error {
 	fmt.Printf("⚙️  Installing deb package from URL: %s\n", url)
+
+	if err := ensureAptUpdate(false); err != nil {
+		return err
+	}
+
 	// Simple implementation for now
-	err := RunShell(fmt.Sprintf("curl -L -o /tmp/package.deb %s && sudo apt install -y /tmp/package.deb && rm /tmp/package.deb", url))
+	err := sh.RunShell(fmt.Sprintf("curl -L -o /tmp/package.deb %s && sudo apt install -y /tmp/package.deb && rm /tmp/package.deb", url))
 	if err != nil {
 		return fmt.Errorf("failed to install deb from url %s: %w", url, err)
 	}

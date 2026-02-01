@@ -8,9 +8,10 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
-	"yv35.com/dotfiles/internal/fsutil"
-	setuptools "yv35.com/dotfiles/internal/init/setup-tools"
-	"yv35.com/dotfiles/internal/tools/git"
+	"yv35.com/dotfiles/internal/config"
+	executor "yv35.com/dotfiles/internal/engine"
+	"yv35.com/dotfiles/internal/tool/git"
+	"yv35.com/dotfiles/internal/util/fsutil"
 )
 
 var rootCmd = &cobra.Command{
@@ -34,7 +35,7 @@ and installing/updating required packages.`,
 	},
 }
 
-func Init() {
+func init() {
 	rootCmd.PersistentFlags().BoolP("init-only", "i", false, "Executes only the init scripts steps, skipping symlink creation.")
 	rootCmd.Flags().BoolP("pull-only", "p", false, "Only pull dotfiles changes from the remote repository.")
 	rootCmd.PersistentFlags().StringP("profile", "P", "default", "The setup profile to use (e.g., 'default', 'work').")
@@ -76,17 +77,19 @@ func Bootstrap(cmd *cobra.Command) {
 	}
 
 	// 3. Link system files
-	if !initOnly {
+	if !initOnly && false {
 		if err := linkSystemFiles(); err != nil {
 			fmt.Println("failed to link system files:", err)
 			os.Exit(1)
 		}
 	}
 
-	// 4. Copy Dotfiles into home directory
-	if err := copyDotfiles(pullOnly); err != nil {
-		fmt.Println("failed to copy dotfiles:", err)
-		os.Exit(1)
+	if false {
+		// 4. Copy Dotfiles into home directory
+		if err := copyDotfiles(pullOnly); err != nil {
+			fmt.Println("failed to copy dotfiles:", err)
+			os.Exit(1)
+		}
 	}
 
 	fmt.Println("✅ Bootstrap completed successfully.")
@@ -97,13 +100,13 @@ func runInitScripts(cmd *cobra.Command, initOnly bool) error {
 
 	fmt.Printf("📦 Initializing system (Profile: %s)...\n", profile)
 
-	loader := setuptools.NewLoader(INIT_SCRIPTS_PATH, profile)
-	groups, err := loader.Load()
+	loader := config.NewLoader(INIT_SCRIPTS_PATH, profile)
+	cfg, err := loader.Load()
 	if err != nil {
 		return fmt.Errorf("failed to load tool configurations: %w", err)
 	}
 
-	executor := setuptools.NewExecutor(groups)
+	executor := executor.NewToolInstallExecutor(cfg)
 	if err := executor.Execute(); err != nil {
 		return fmt.Errorf("bootstrap failed during tool installation: %w", err)
 	}

@@ -1,4 +1,4 @@
-package setuptools
+package config
 
 import (
 	"fmt"
@@ -21,7 +21,7 @@ func NewLoader(initDir string, profile string) *Loader {
 	}
 }
 
-func (l *Loader) Load() ([]Group, error) {
+func (l *Loader) Load() (*Config, error) {
 	files, err := filepath.Glob(filepath.Join(l.InitDir, "*.yaml"))
 	if err != nil {
 		return nil, fmt.Errorf("failed to list yaml files in %s: %w", l.InitDir, err)
@@ -29,7 +29,7 @@ func (l *Loader) Load() ([]Group, error) {
 
 	sort.Strings(files)
 
-	var allGroups []Group
+	var allGroups []DependencyGroup
 	for _, file := range files {
 		groups, err := l.loadFile(file)
 		if err != nil {
@@ -38,10 +38,12 @@ func (l *Loader) Load() ([]Group, error) {
 		allGroups = append(allGroups, groups...)
 	}
 
-	return l.filterGroups(allGroups), nil
+	allGroups = l.filterGroups(allGroups)
+
+	return &Config{Groups: allGroups}, nil
 }
 
-func (l *Loader) loadFile(path string) ([]Group, error) {
+func (l *Loader) loadFile(path string) ([]DependencyGroup, error) {
 	data, err := os.ReadFile(path)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read file %s: %w", path, err)
@@ -55,8 +57,8 @@ func (l *Loader) loadFile(path string) ([]Group, error) {
 	return config.Groups, nil
 }
 
-func (l *Loader) filterGroups(groups []Group) []Group {
-	var filtered []Group
+func (l *Loader) filterGroups(groups []DependencyGroup) []DependencyGroup {
+	var filtered []DependencyGroup
 	for _, g := range groups {
 		if g.Profile == "" || g.Profile == l.Profile || g.Profile == "default" {
 			filtered = append(filtered, g)

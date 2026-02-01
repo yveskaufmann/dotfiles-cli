@@ -1,10 +1,12 @@
-package tools
+package tool
 
 import (
 	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"yv35.com/dotfiles/internal/util/sh"
 )
 
 func InstallBinary(name, url, version, binaryPath, installPath string, binaries []string) error {
@@ -12,7 +14,7 @@ func InstallBinary(name, url, version, binaryPath, installPath string, binaries 
 	if len(binaries) > 0 {
 		allInstalled := true
 		for _, b := range binaries {
-			if err := RunShell("type " + b + " > /dev/null 2>&1"); err != nil {
+			if err := sh.RunShell("type " + b + " > /dev/null 2>&1"); err != nil {
 				allInstalled = false
 				break
 			}
@@ -21,7 +23,7 @@ func InstallBinary(name, url, version, binaryPath, installPath string, binaries 
 			fmt.Printf("✅ Binaries %v are already installed\n", binaries)
 			return nil
 		}
-	} else if err := RunShell("type " + name + " > /dev/null 2>&1"); err == nil {
+	} else if err := sh.RunShell("type " + name + " > /dev/null 2>&1"); err == nil {
 		fmt.Printf("✅ %s is already installed (type check passed)\n", name)
 		return nil
 	}
@@ -40,7 +42,7 @@ func InstallBinary(name, url, version, binaryPath, installPath string, binaries 
 	defer os.Remove(tmpFile)
 
 	fmt.Printf("⬇️  Downloading %s...\n", finalURL)
-	if err := RunShell(fmt.Sprintf("curl -L -sS -o %s %s", tmpFile, finalURL)); err != nil {
+	if err := sh.RunShell(fmt.Sprintf("curl -L -sS -o %s %s", tmpFile, finalURL)); err != nil {
 		return fmt.Errorf("failed to download: %w", err)
 	}
 
@@ -60,11 +62,11 @@ func InstallMultipleFromArchive(binaries []string, srcFile, installPath string) 
 	defer os.RemoveAll(extractDir)
 
 	if strings.HasSuffix(srcFile, ".zip") {
-		if err := RunShell(fmt.Sprintf("unzip -o %s -d %s", srcFile, extractDir)); err != nil {
+		if err := sh.RunShell(fmt.Sprintf("unzip -o %s -d %s", srcFile, extractDir)); err != nil {
 			return fmt.Errorf("failed to extract zip: %w", err)
 		}
 	} else {
-		if err := RunShell(fmt.Sprintf("tar -xzf %s -C %s", srcFile, extractDir)); err != nil {
+		if err := sh.RunShell(fmt.Sprintf("tar -xzf %s -C %s", srcFile, extractDir)); err != nil {
 			return fmt.Errorf("failed to extract tar: %w", err)
 		}
 	}
@@ -109,11 +111,11 @@ func InstallFromArchiveOrBinary(name, srcFile, binaryPath, installPath string) e
 		defer os.RemoveAll(extractDir)
 
 		if strings.HasSuffix(srcFile, ".zip") {
-			if err := RunShell(fmt.Sprintf("unzip -o %s -d %s", srcFile, extractDir)); err != nil {
+			if err := sh.RunShell(fmt.Sprintf("unzip -o %s -d %s", srcFile, extractDir)); err != nil {
 				return fmt.Errorf("failed to extract zip: %w", err)
 			}
 		} else {
-			if err := RunShell(fmt.Sprintf("tar -xzf %s -C %s", srcFile, extractDir)); err != nil {
+			if err := sh.RunShell(fmt.Sprintf("tar -xzf %s -C %s", srcFile, extractDir)); err != nil {
 				return fmt.Errorf("failed to extract tar: %w", err)
 			}
 		}
@@ -172,15 +174,15 @@ func FinalizeBinaryInstall(srcPath, targetDir, name string) error {
 		moveCmd = "sudo " + moveCmd
 	}
 
-	if err := RunShell(fmt.Sprintf("%s %s", mkdirCmd, targetDir)); err != nil {
+	if err := sh.RunShell(fmt.Sprintf("%s %s", mkdirCmd, targetDir)); err != nil {
 		return fmt.Errorf("failed to create target directory %s: %w", targetDir, err)
 	}
 
-	if err := RunShell(fmt.Sprintf("%s %s %s", moveCmd, srcPath, destPath)); err != nil {
+	if err := sh.RunShell(fmt.Sprintf("%s %s %s", moveCmd, srcPath, destPath)); err != nil {
 		return fmt.Errorf("failed to move binary to %s: %w", destPath, err)
 	}
 
-	if err := RunShell(fmt.Sprintf("sudo chmod +x %s", destPath)); err != nil {
+	if err := sh.RunShell(fmt.Sprintf("sudo chmod +x %s", destPath)); err != nil {
 		return fmt.Errorf("failed to make binary %s executable: %w", destPath, err)
 	}
 

@@ -3,7 +3,8 @@ package git
 import (
 	"fmt"
 
-	"yv35.com/dotfiles/internal/tools"
+	"yv35.com/dotfiles/internal/tool"
+	"yv35.com/dotfiles/internal/util/sh"
 )
 
 // Ensure will attempt to ensure that git is installed on the system.
@@ -11,14 +12,14 @@ import (
 // when it fails it will return an error.
 func Ensure() error {
 
-	if tools.IsBinaryOnPath("git") {
+	if sh.IsBinaryOnPath("git") {
 		fmt.Printf("✅ git is already installed\n")
 		return nil
 	}
 
 	fmt.Printf("⚙️  git is not installed, attempting to install...\n")
 
-	if err := tools.InstallAptPackages([]string{"git"}); err != nil {
+	if err := tool.InstallAptPackages([]string{"git"}); err != nil {
 		return fmt.Errorf("failed to install git: %w", err)
 	}
 

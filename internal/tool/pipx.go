@@ -1,11 +1,13 @@
-package tools
+package tool
 
 import (
 	"fmt"
+
+	"yv35.com/dotfiles/internal/util/sh"
 )
 
 func EnsurePipx() error {
-	if IsBinaryOnPath("pipx") {
+	if sh.IsBinaryOnPath("pipx") {
 		return nil
 	}
 
@@ -15,7 +17,7 @@ func EnsurePipx() error {
 		return fmt.Errorf("failed to install pipx: %w", err)
 	}
 
-	if err := RunShell("pipx ensurepath"); err != nil {
+	if err := sh.RunShell("pipx ensurepath"); err != nil {
 		return fmt.Errorf("failed to ensure pipx path: %w", err)
 	}
 
@@ -29,14 +31,14 @@ func InstallPipx(pkg string) error {
 		return err
 	}
 
-	err := RunShell("pipx list --short 2>/dev/null | awk '{print $1 }' | grep -xq -- \"" + pkg + "\"")
+	err := sh.RunShell("pipx list --short 2>/dev/null | awk '{print $1 }' | grep -xq -- \"" + pkg + "\"")
 	if err == nil {
 		fmt.Printf("✅ pipx package %s is already installed\n", pkg)
 		return nil
 	}
 
 	fmt.Printf("⚙️  Installing pipx package: %s\n", pkg)
-	err = Run("pipx", "install", pkg)
+	err = sh.Run("pipx", "install", pkg)
 	if err != nil {
 		return fmt.Errorf("❌ Failed to install pipx package %s: %w", pkg, err)
 	}
