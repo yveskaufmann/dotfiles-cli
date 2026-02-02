@@ -9,7 +9,6 @@ dependencies:
         - build-essential
         - python3
         - python3-pip
-        - https://api.k8slens.dev/binaries/Lens-2022.12.201157-latest.amd64.deb 
 
    
     ppa:

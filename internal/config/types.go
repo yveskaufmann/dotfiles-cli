@@ -33,6 +33,7 @@ type DependencyGroup struct {
 
 type PPASpec struct {
 	Name       string   `yaml:"name"`
+	SourceName string   `yaml:"source_name,omitempty"`
 	Key        string   `yaml:"key,omitempty"`
 	URI        string   `yaml:"uri,omitempty"`
 	Suites     string   `yaml:"suites,omitempty"`
@@ -41,6 +42,23 @@ type PPASpec struct {
 	KeyID      string   `yaml:"key_id,omitempty"`
 	Pkgs       []string `yaml:"pkgs,omitempty"`
 }
+
+func (p *PPASpec) UnmarshalYAML(node *yaml.Node) error {
+	type alias PPASpec
+	err := node.Decode((*alias)(p))
+
+	if err != nil {
+		return err
+	}
+
+	p.SourceName = strings.TrimPrefix(p.Name, "ppa:")
+	p.SourceName = strings.ReplaceAll(p.SourceName, "/", "-")
+	p.SourceName = strings.ReplaceAll(p.SourceName, ".", "-")
+
+	return nil
+}
+
+// Sanitize name for filename
 
 type AptSpec struct {
 	Name string `yaml:"name"`
