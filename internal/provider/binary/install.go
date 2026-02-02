@@ -19,9 +19,27 @@ func (p *Provider) installBinary(spec config.BinarySpec) error {
 		version = "latest"
 	}
 
-	finalURL := stringutils.ResolvePlaceholdersWithVars(spec.URL, map[string]string{
-		"version": version,
-	})
+	finalURL := spec.URL
+
+	fields := []struct {
+		ptr *string
+	}{
+		{&finalURL},
+		{&spec.BinaryPath},
+		{&spec.InstallPath},
+	}
+
+	for _, field := range fields {
+		*field.ptr = stringutils.ResolvePlaceholdersWithVars(*field.ptr, map[string]string{
+			"version": version,
+		})
+	}
+
+	for i, bin := range spec.Binaries {
+		spec.Binaries[i] = stringutils.ResolvePlaceholdersWithVars(bin, map[string]string{
+			"version": version,
+		})
+	}
 
 	// Download the file
 	tmpFile, err := archive.DownloadFile(finalURL, name)
