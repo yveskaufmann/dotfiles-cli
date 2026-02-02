@@ -12,7 +12,7 @@ build:
 
 .PHONY: test
 test:
-	go -v test ./...
+	go test -v ./...
 
 .PHONY: clean
 clean:
