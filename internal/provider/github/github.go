@@ -22,6 +22,10 @@ func (p *Provider) Priority() int {
 	return 100 // Default priority
 }
 
+func (p *Provider) HasConfig(group config.DependencyGroup) bool {
+	return len(group.Github) > 0
+}
+
 func (p *Provider) Install(group config.DependencyGroup, onComplete types.OnTaskComplete) error {
 	// Skip if no github packages defined
 	if len(group.Github) == 0 {

@@ -31,6 +31,10 @@ func (p *Provider) Priority() int {
 	return 10 // System package manager - high priority
 }
 
+func (p *Provider) HasConfig(group config.DependencyGroup) bool {
+	return len(group.Apt) > 0 || len(group.PPA) > 0
+}
+
 func (p *Provider) Setup() error {
 	// Skip if not Linux
 	if !osutil.IsLinux() {

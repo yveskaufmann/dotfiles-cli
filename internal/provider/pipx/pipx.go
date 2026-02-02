@@ -23,6 +23,10 @@ func (p *Provider) Priority() int {
 	return 100 // Default priority
 }
 
+func (p *Provider) HasConfig(group config.DependencyGroup) bool {
+	return len(group.Pipx) > 0
+}
+
 func (p *Provider) Setup() error {
 	if sh.IsBinaryOnPath("pipx") {
 		return nil

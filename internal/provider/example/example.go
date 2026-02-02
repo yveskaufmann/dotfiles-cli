@@ -26,6 +26,12 @@ func (p *Provider) Priority() int {
 	return 100 // Default priority
 }
 
+func (p *Provider) HasConfig(group config.DependencyGroup) bool {
+	// Example: Check if the group has configuration for this provider
+	// Replace this with actual field checks based on your config structure
+	return false
+}
+
 func (p *Provider) Setup() error {
 	fmt.Println("Setting up ExampleProvider...")
 	return nil

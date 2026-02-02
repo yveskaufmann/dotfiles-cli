@@ -15,6 +15,9 @@ type Provider interface {
 
 	// Install the installation of dependency group and returns a task Result.
 	Install(config config.DependencyGroup, onComplete OnTaskComplete) error
+
+	// HasConfig checks if the given dependency group contains configuration for this provider.
+	HasConfig(group config.DependencyGroup) bool
 }
 
 type Setupable interface {

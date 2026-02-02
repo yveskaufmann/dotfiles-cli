@@ -26,6 +26,10 @@ func (p *Provider) Priority() int {
 	return 50 // Version manager - medium priority
 }
 
+func (p *Provider) HasConfig(group config.DependencyGroup) bool {
+	return len(group.NVM) > 0
+}
+
 func (p *Provider) Setup() error {
 	nvmDir := p.getNVMDir()
 

@@ -26,6 +26,10 @@ func (p *Provider) Priority() int {
 	return 50 // Version manager - medium priority
 }
 
+func (p *Provider) HasConfig(group config.DependencyGroup) bool {
+	return len(group.Sdkman) > 0
+}
+
 func (p *Provider) ensureDependencies() error {
 	// Check if zip and unzip are installed
 	_, zipErr := sh.RunShellOutput("which zip 2>/dev/null")
