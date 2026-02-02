@@ -5,6 +5,7 @@ import (
 
 	"yv35.com/dotfiles/internal/types"
 	"yv35.com/dotfiles/internal/util/sh"
+	"yv35.com/dotfiles/internal/util/stringutils"
 )
 
 func (p *Provider) isURL(s string) bool {
@@ -12,6 +13,8 @@ func (p *Provider) isURL(s string) bool {
 }
 
 func (p *Provider) installDebFromURL(url string, onComplete types.OnTaskComplete) error {
+
+	url = stringutils.ResolvePlaceholders(url)
 
 	err := sh.RunShell(fmt.Sprintf("curl -L -o /tmp/package.deb %s && sudo apt install -y /tmp/package.deb && rm /tmp/package.deb", url))
 
