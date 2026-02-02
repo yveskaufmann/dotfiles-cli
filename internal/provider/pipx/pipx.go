@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"yv35.com/dotfiles/internal/config"
-	"yv35.com/dotfiles/internal/tool"
+	"yv35.com/dotfiles/internal/provider"
 	"yv35.com/dotfiles/internal/types"
 	"yv35.com/dotfiles/internal/util/sh"
 )
@@ -28,8 +28,12 @@ func (p *Provider) Setup() error {
 		return nil
 	}
 
-	// pipx not installed, attempt to install via apt
-	if err := tool.Install("pipx"); err != nil {
+	// pipx not installed, attempt to install via system package manager
+	if err := provider.InstallSystemPackage(provider.SystemPackageNames{
+		Name: "pipx",
+		Apt:  "pipx",
+		Brew: "pipx",
+	}); err != nil {
 		return fmt.Errorf("failed to install pipx: %w", err)
 	}
 

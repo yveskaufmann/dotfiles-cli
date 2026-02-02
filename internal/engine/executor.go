@@ -48,10 +48,8 @@ func (e *ToolInstallExecutor) Setup() error {
 			continue
 		}
 
-		if setupable, ok := providerInstance.(types.Setupable); ok {
-			if err := setupable.Setup(); err != nil {
-				return fmt.Errorf("failed to setup provider %s: %w", providerInstance.ID(), err)
-			}
+		if err := provider.SetupProvider(providerInstance); err != nil {
+			return err
 		}
 	}
 
@@ -59,6 +57,11 @@ func (e *ToolInstallExecutor) Setup() error {
 }
 
 func (e *ToolInstallExecutor) Execute() error {
+
+	if err := e.Setup(); err != nil {
+		return fmt.Errorf("failed to setup providers: %w", err)
+	}
+
 	for _, group := range e.Groups {
 		if group.Systems != "" && !osutil.Is(osutil.OSType(group.Systems)) {
 			fmt.Printf("⏭️  Skipping group %s (system mismatch: %s)\n", group.Name, group.Systems)

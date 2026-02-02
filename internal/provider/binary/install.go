@@ -3,10 +3,10 @@ package binary
 import (
 	"fmt"
 	"os"
-	"strings"
 
 	"yv35.com/dotfiles/internal/config"
 	"yv35.com/dotfiles/internal/util/archive"
+	"yv35.com/dotfiles/internal/util/stringutils"
 )
 
 // installBinary downloads and installs a binary from a URL
@@ -18,7 +18,10 @@ func (p *Provider) installBinary(spec config.BinarySpec) error {
 	if version == "" {
 		version = "latest"
 	}
-	finalURL := strings.ReplaceAll(spec.URL, ":version", version)
+
+	finalURL := stringutils.ResolvePlaceholdersWithVars(spec.URL, map[string]string{
+		"version": version,
+	})
 
 	// Download the file
 	tmpFile, err := archive.DownloadFile(finalURL, name)

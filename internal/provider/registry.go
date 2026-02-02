@@ -3,41 +3,28 @@ package provider
 import (
 	"sort"
 
-	"yv35.com/dotfiles/internal/provider/apt"
-	"yv35.com/dotfiles/internal/provider/binary"
-	"yv35.com/dotfiles/internal/provider/brew"
-	"yv35.com/dotfiles/internal/provider/custom"
-	"yv35.com/dotfiles/internal/provider/example"
-	"yv35.com/dotfiles/internal/provider/github"
-	"yv35.com/dotfiles/internal/provider/npm"
-	"yv35.com/dotfiles/internal/provider/nvm"
-	"yv35.com/dotfiles/internal/provider/pipx"
-	"yv35.com/dotfiles/internal/provider/script"
-	"yv35.com/dotfiles/internal/provider/sdkman"
-	"yv35.com/dotfiles/internal/provider/snap"
 	"yv35.com/dotfiles/internal/types"
 )
+
+var defaultProviders = []types.Provider{}
+
+func RegisterProviders(p types.Provider) {
+	defaultProviders = append(defaultProviders, p)
+}
 
 type Registry struct {
 	Providers map[string]types.Provider
 }
 
 func NewRegistry() *Registry {
+
+	providers := make(map[string]types.Provider)
+	for _, p := range defaultProviders {
+		providers[p.ID()] = p
+	}
+
 	return &Registry{
-		Providers: map[string]types.Provider{
-			"example": example.NewProvider(),
-			"snap":    snap.NewProvider(),
-			"pipx":    pipx.NewProvider(),
-			"npm":     npm.NewProvider(),
-			"brew":    brew.NewProvider(),
-			"binary":  binary.NewProvider(),
-			"github":  github.NewProvider(),
-			"apt":     apt.NewProvider(),
-			"script":  script.NewProvider(),
-			"custom":  custom.NewProvider(),
-			"nvm":     nvm.NewProvider(),
-			"sdkman":  sdkman.NewProvider(),
-		},
+		Providers: providers,
 	}
 }
 

@@ -5,7 +5,7 @@ import (
 	"os"
 )
 
-func Init() *slog.Logger {
+func init() {
 	var handler slog.Handler
 
 	env := os.Getenv("APP_ENV")
@@ -24,6 +24,4 @@ func Init() *slog.Logger {
 
 	logger := slog.New(handler)
 	slog.SetDefault(logger)
-
-	return logger
 }

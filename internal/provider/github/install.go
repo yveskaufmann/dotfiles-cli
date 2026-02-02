@@ -6,11 +6,15 @@ import (
 
 	"yv35.com/dotfiles/internal/config"
 	"yv35.com/dotfiles/internal/util/archive"
+	"yv35.com/dotfiles/internal/util/stringutils"
 )
 
 // installGithubRelease downloads and installs a GitHub release
 func (p *Provider) installGithubRelease(spec config.GithubSpec) error {
 	name := spec.Name
+
+	spec.AssetPattern = stringutils.ResolvePlaceholders(spec.AssetPattern)
+	spec.BinaryPath = stringutils.ResolvePlaceholders(spec.BinaryPath)
 
 	// Fetch release info from GitHub API
 	release, err := p.fetchReleaseInfo(spec)

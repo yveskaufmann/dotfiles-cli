@@ -110,10 +110,6 @@ func runInitScripts(cmd *cobra.Command, initOnly bool) error {
 	executor := executor.NewToolInstallExecutor(cfg)
 	executor.SetEnabledProviders(enabledProviders)
 
-	if err := executor.Setup(); err != nil {
-		return fmt.Errorf("failed to setup providers: %w", err)
-	}
-
 	if err := executor.Execute(); err != nil {
 		return fmt.Errorf("bootstrap failed during tool installation: %w", err)
 	}

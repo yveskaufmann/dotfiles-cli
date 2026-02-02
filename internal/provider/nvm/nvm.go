@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"yv35.com/dotfiles/internal/config"
-	"yv35.com/dotfiles/internal/tool/github"
+	"yv35.com/dotfiles/internal/provider/github"
 	"yv35.com/dotfiles/internal/types"
 	"yv35.com/dotfiles/internal/util/sh"
 )

@@ -3,7 +3,7 @@ package git
 import (
 	"fmt"
 
-	"yv35.com/dotfiles/internal/tool"
+	"yv35.com/dotfiles/internal/provider"
 	"yv35.com/dotfiles/internal/util/sh"
 )
 
@@ -19,8 +19,14 @@ func Ensure() error {
 
 	fmt.Printf("⚙️  git is not installed, attempting to install...\n")
 
-	if err := tool.InstallAptPackages([]string{"git"}); err != nil {
-		return fmt.Errorf("failed to install git: %w", err)
+	err := provider.InstallSystemPackage(provider.SystemPackageNames{
+		Name: "git",
+		Apt:  "git",
+		Brew: "git",
+	})
+
+	if err != nil {
+		return fmt.Errorf("failed to install git via system package manager: %w", err)
 	}
 
 	fmt.Printf("✅ git has been installed successfully\n")

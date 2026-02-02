@@ -2,11 +2,11 @@ package main
 
 import (
 	"yv35.com/dotfiles/internal/cli"
-	"yv35.com/dotfiles/internal/logging"
+
+	_ "yv35.com/dotfiles/internal/logging"
+	_ "yv35.com/dotfiles/internal/provider/builtin"
 )
 
 func main() {
-	logging.Init()
-
 	cli.Execute()
 }
