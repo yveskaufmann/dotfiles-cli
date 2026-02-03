@@ -29,11 +29,11 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Set up a user to mimic the target environment
-RUN useradd -m -s /bin/bash yves && \
-    echo "yves ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+# Give ubuntu user sudo access (if not already configured)
+RUN echo "ubuntu ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
 # Create the workspace directory
-WORKDIR /home/yves/.dotfiles
+WORKDIR /home/ubuntu/.dotfiles
 
 # Copy the built binary from the builder stage
 COPY --from=builder /app/dotfiles ./bin/dotfiles
@@ -43,10 +43,11 @@ COPY init/ ./init/
 COPY lib/ ./lib/
 COPY .schema/ ./.schema/
 
-# Change ownership to the test user
-RUN chown -R yves:yves /home/yves
+# Change ownership to the ubuntu user
+RUN chown -R ubuntu:ubuntu /home/ubuntu/.dotfiles
 
-USER yves
+# Switch to ubuntu user
+USER ubuntu
 
 RUN echo "tzdata tzdata/Areas select Europe" | sudo debconf-set-selections
 RUN echo "tzdata tzdata/Zones/Europe select Berlin" | sudo debconf-set-selections
