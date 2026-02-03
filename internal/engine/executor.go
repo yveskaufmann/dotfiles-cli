@@ -48,6 +48,20 @@ func (e *ToolInstallExecutor) Setup() error {
 			continue
 		}
 
+		// Has Provider configuration?
+		hasConfig := false
+		for _, group := range e.Groups {
+			if providerInstance.HasConfig(group) {
+				hasConfig = true
+				break
+			}
+		}
+
+		// Skip setup if no config found for this provider
+		if !hasConfig {
+			continue
+		}
+
 		if err := provider.SetupProvider(providerInstance); err != nil {
 			return err
 		}
