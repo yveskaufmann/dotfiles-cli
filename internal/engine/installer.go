@@ -9,21 +9,21 @@ import (
 	"yv35.com/dotfiles/internal/util/osutil"
 )
 
-type ToolInstallExecutor struct {
+type ToolInstaller struct {
 	Groups           []config.DependencyGroup
 	Providers        *provider.Registry
 	EnabledProviders map[string]bool
 }
 
-func NewToolInstallExecutor(config *config.Config) *ToolInstallExecutor {
-	return &ToolInstallExecutor{
+func NewToolInstaller(config *config.Config) *ToolInstaller {
+	return &ToolInstaller{
 		Groups:           config.Groups,
 		Providers:        provider.NewRegistry(),
 		EnabledProviders: nil, // nil means all enabled
 	}
 }
 
-func (e *ToolInstallExecutor) SetEnabledProviders(providers []string) {
+func (e *ToolInstaller) SetEnabledProviders(providers []string) {
 	if len(providers) == 0 {
 		e.EnabledProviders = nil
 		return
@@ -35,14 +35,14 @@ func (e *ToolInstallExecutor) SetEnabledProviders(providers []string) {
 	}
 }
 
-func (e *ToolInstallExecutor) isProviderEnabled(providerID string) bool {
+func (e *ToolInstaller) isProviderEnabled(providerID string) bool {
 	if e.EnabledProviders == nil {
 		return true
 	}
 	return e.EnabledProviders[providerID]
 }
 
-func (e *ToolInstallExecutor) Setup() error {
+func (e *ToolInstaller) Setup() error {
 	for _, providerInstance := range e.Providers.List() {
 		if !e.isProviderEnabled(providerInstance.ID()) {
 			continue
@@ -70,7 +70,7 @@ func (e *ToolInstallExecutor) Setup() error {
 	return nil
 }
 
-func (e *ToolInstallExecutor) Execute() error {
+func (e *ToolInstaller) Execute() error {
 
 	if err := e.Setup(); err != nil {
 		return fmt.Errorf("failed to setup providers: %w", err)
@@ -90,7 +90,7 @@ func (e *ToolInstallExecutor) Execute() error {
 	return nil
 }
 
-func (e *ToolInstallExecutor) executeGroup(group config.DependencyGroup) error {
+func (e *ToolInstaller) executeGroup(group config.DependencyGroup) error {
 
 	for _, providerInstance := range e.Providers.List() {
 		if !e.isProviderEnabled(providerInstance.ID()) {

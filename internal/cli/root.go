@@ -68,10 +68,12 @@ func Bootstrap(cmd *cobra.Command) {
 		os.Exit(1)
 	}
 
-	// 2. Run Init scripts
-	if err := runInitScripts(cmd, initOnly); err != nil {
-		fmt.Println("failed to run init scripts:", err)
-		os.Exit(1)
+	if false {
+		// 2. Run Init scripts
+		if err := runInitScripts(cmd, initOnly); err != nil {
+			fmt.Println("failed to run init scripts:", err)
+			os.Exit(1)
+		}
 	}
 
 	// 3. Link system files
@@ -94,7 +96,7 @@ func Bootstrap(cmd *cobra.Command) {
 }
 
 func linkSystemFiles() error {
-	panic("unimplemented")
+	return nil
 }
 
 func copyDotfiles(pullOnly bool) error {

@@ -34,7 +34,7 @@ func runInitScripts(cmd *cobra.Command, initOnly bool) error {
 		return fmt.Errorf("failed to load tool configurations: %w", err)
 	}
 
-	executor := executor.NewToolInstallExecutor(cfg)
+	executor := executor.NewToolInstaller(cfg)
 	executor.SetEnabledProviders(enabledProviders)
 
 	if err := executor.Execute(); err != nil {
