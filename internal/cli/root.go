@@ -34,10 +34,7 @@ and installing/updating required packages.`,
 }
 
 func init() {
-	rootCmd.PersistentFlags().BoolP("init-only", "i", false, "Executes only the init scripts steps, skipping symlink creation.")
 	rootCmd.Flags().BoolP("pull-only", "p", false, "Only pull dotfiles changes from the remote repository.")
-	rootCmd.PersistentFlags().StringP("profile", "P", "default", "The setup profile to use (e.g., 'default', 'work').")
-	rootCmd.PersistentFlags().StringSliceP("providers", "", []string{}, "Comma-separated list of providers to enable (e.g., 'nvm,apt'). If empty, all providers are enabled.")
 }
 
 func Execute() {

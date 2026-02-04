@@ -47,5 +47,8 @@ func runInitScripts(cmd *cobra.Command, initOnly bool) error {
 }
 
 func init() {
+	installCmd.Flags().BoolP("init-only", "i", false, "Executes only the init scripts steps, skipping symlink creation.")
+	installCmd.Flags().StringP("profile", "P", "default", "The setup profile to use (e.g., 'default', 'work').")
+	installCmd.Flags().StringSliceP("providers", "", []string{}, "Comma-separated list of providers to enable (e.g., 'nvm,apt'). If empty, all providers are enabled.")
 	RegisterCommands(installCmd)
 }
