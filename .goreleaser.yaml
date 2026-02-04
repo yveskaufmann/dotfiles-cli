@@ -58,6 +58,6 @@ release:
   github:
     owner: yveskaufmann
     name: .dotfiles
-  name_template: "Release {{.Tag}}"
+  name_template: "{{.Tag}}"
   draft: false
   prerelease: auto
