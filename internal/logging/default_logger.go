@@ -22,7 +22,15 @@ func init() {
 		panic(fmt.Errorf("failed to setup logging: %v", err))
 	}
 
-	fd, err := os.OpenFile(path.Join(cwd, "logs/log.txt"), os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+	logPath := path.Join(cwd, "logs/log.txt")
+
+	// Ensure logs directory exists
+	logDir := path.Dir(logPath)
+	if err := os.MkdirAll(logDir, 0755); err != nil {
+		panic(fmt.Errorf("failed to create logs directory: %v", err))
+	}
+
+	fd, err := os.OpenFile(logPath, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
 	if err != nil {
 		panic(fmt.Errorf("failed to setup logging: %v", err))
 	}

@@ -1,0 +1,19 @@
+groups:
+  - name: Essential Tools
+    apt:
+      - git
+      - curl
+      - wget
+    
+  - name: Development Tools
+    apt:
+      - vim
+      - build-essential
+      - jq
+    
+  - name: GitHub CLI
+    github_release:
+      - name: gh
+        repo: cli/cli
+        asset_pattern: {os}_{arch}\.tar\.gz$
+        binary_path: bin/gh

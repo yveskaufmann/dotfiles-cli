@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# Example script - demonstrates how to create utility scripts
+
+set -euo pipefail
+
+main() {
+    echo "Hello from {{.GitHubHandle}}'s dotfiles!"
+    echo "Add your custom scripts to the bin/ directory"
+}
+
+main "$@"

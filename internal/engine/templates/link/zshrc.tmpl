@@ -1,0 +1,11 @@
+# Custom zsh configuration
+# This file will be symlinked to ~/.zshrc
+
+# Load dotfiles sources
+for file in ~/.dotfiles/source/*.sh; do
+    [ -f "$file" ] && source "$file"
+done
+
+# Your custom configurations here
+export EDITOR=vim
+export PATH="$HOME/.dotfiles/bin:$PATH"
