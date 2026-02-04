@@ -1,0 +1,365 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Dotfiles Configuration Schema",
+  "description": "Schema for validating Go-based dotfile bootstrapper configurations in init/*.yaml files.",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "URL or local path to this JSON schema file for editor validation support."
+    },
+    "groups": {
+      "type": "array",
+      "description": "A list of installation groups to be processed sequentially.",
+      "items": {
+        "$ref": "#/definitions/Group"
+      }
+    }
+  },
+  "required": [
+    "groups"
+  ],
+  "definitions": {
+    "Group": {
+      "type": "object",
+      "description": "An installation group defines a set of tools share common properties like profile or system requirements.",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The unique, human-readable name of the installation group."
+        },
+        "profile": {
+          "type": "string",
+          "description": "Filter by profile name (e.g., 'default', 'work', 'university'). The group is skipped if the active profile does not match."
+        },
+        "systems": {
+          "type": "string",
+          "description": "Filter by operating system (e.g., 'linux', 'darwin'). The group is skipped if the current OS matches neither."
+        },
+        "apt": {
+          "type": "array",
+          "description": "List of standard Debian/Ubuntu packages to install via apt-get.",
+          "items": {
+            "type": "string",
+            "description": "The name of the apt package."
+          }
+        },
+        "ppa": {
+          "type": "array",
+          "description": "Personal Package Archives (PPAs) to be added in DEB822 format before installing packages.",
+          "items": {
+            "$ref": "#/definitions/PPASpec"
+          }
+        },
+        "snap": {
+          "type": "array",
+          "description": "Ubuntu Snap packages to install. Supports both simple strings and detailed objects.",
+          "items": {
+            "$ref": "#/definitions/StringOrNamedObject"
+          }
+        },
+        "pipx": {
+          "type": "array",
+          "description": "Python packages to install using pipx.",
+          "items": {
+            "$ref": "#/definitions/StringOrNamedObject"
+          }
+        },
+        "npm": {
+          "type": "array",
+          "description": "Node.js packages to install globally using npm.",
+          "items": {
+            "$ref": "#/definitions/StringOrNamedObject"
+          }
+        },
+        "github_release": {
+          "type": "array",
+          "description": "Binaries to download and install from GitHub Releases.",
+          "items": {
+            "$ref": "#/definitions/GithubSpec"
+          }
+        },
+        "binary": {
+          "type": "array",
+          "description": "Generic binary or archive downloads from a direct URL.",
+          "items": {
+            "$ref": "#/definitions/BinarySpec"
+          }
+        },
+        "custom": {
+          "type": "array",
+          "description": "Custom inline shell commands for complex installations with idempotency checks.",
+          "items": {
+            "$ref": "#/definitions/CustomSpec"
+          }
+        },
+        "script": {
+          "type": "array",
+          "description": "Execution of external script files located in the repository.",
+          "items": {
+            "$ref": "#/definitions/ScriptSpec"
+          }
+        },
+        "nvm": {
+          "type": "array",
+          "description": "Node Version Manager (NVM) configurations for managing multiple Node.js versions.",
+          "items": {
+            "$ref": "#/definitions/NVMSpec"
+          }
+        },
+        "sdkman": {
+          "type": "array",
+          "description": "SdkMan configurations for managing JVM-based tools (Java, Gradle, Maven, Kotlin, etc.).",
+          "items": {
+            "$ref": "#/definitions/SdkmanSpec"
+          }
+        }
+      },
+      "required": [
+        "name"
+      ]
+    },
+    "PPASpec": {
+      "type": "object",
+      "description": "Configuration for an Ubuntu PPA (Personal Package Archive).",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Unique identifier for the PPA source file (e.g., 'docker', 'hashicorp')."
+        },
+        "key": {
+          "type": "string",
+          "description": "URL to the GPG armor key to download and use for signing."
+        },
+        "key_server": {
+          "type": "string",
+          "description": "Keyserver URL to fetch the GPG key from (e.g., 'hkp://keyserver.ubuntu.com:80'). Use with key_id."
+        },
+        "key_id": {
+          "type": "string",
+          "description": "The GPG Key ID to fetch from the specified keyserver."
+        },
+        "uri": {
+          "type": "string",
+          "description": "The repository URI. Supports the ':arch' placeholder which is replaced by the host architecture."
+        },
+        "suites": {
+          "type": "string",
+          "description": "The distribution suite (e.g., 'stable', 'noble'). Defaults to host distribution if omitted."
+        },
+        "components": {
+          "type": "string",
+          "description": "Repository components (e.g., 'main', 'multiverse'). Defaults to 'main' if omitted."
+        },
+        "pkgs": {
+          "type": "array",
+          "description": "List of packages to install after the PPA source is successfully added.",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "name"
+      ]
+    },
+    "StringOrNamedObject": {
+      "description": "Supports either a simple string (the package name) or an object containing at least the 'name' property.",
+      "oneOf": [
+        {
+          "type": "string",
+          "description": "The name of the package."
+        },
+        {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "The name of the package."
+            }
+          },
+          "required": [
+            "name"
+          ]
+        }
+      ]
+    },
+    "GithubSpec": {
+      "type": "object",
+      "description": "Configuration for downloading a binary from a GitHub Release.",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the tool, used for verification via 'type'."
+        },
+        "repo": {
+          "type": "string",
+          "description": "The GitHub repository in 'owner/repo' format."
+        },
+        "version": {
+          "type": "string",
+          "description": "Specific tag name for the release. Defaults to 'latest'."
+        },
+        "binaries": {
+          "type": "array",
+          "description": "List of multiple binaries to extract from a single archive download.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "asset_pattern": {
+          "type": "string",
+          "description": "Regular expression pattern to identify the correct asset in the release (e.g., 'linux_amd64.tar.gz$')."
+        },
+        "binary_path": {
+          "type": "string",
+          "description": "Relative path to the binary within the extracted archive. Not needed if name is in archive root."
+        },
+        "install_path": {
+          "type": "string",
+          "description": "Target directory for the binary. Defaults to /usr/local/bin if root, else ~/bin."
+        }
+      },
+      "required": [
+        "name",
+        "repo"
+      ]
+    },
+    "BinarySpec": {
+      "type": "object",
+      "description": "Configuration for downloading a binary or archive from a direct URL.",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the tool, used for verification via 'type'."
+        },
+        "url": {
+          "type": "string",
+          "description": "Direct URL to the binary or archive. Supports the ':version' placeholder."
+        },
+        "version": {
+          "type": "string",
+          "description": "Version string used to replace the ':version' placeholder in the URL."
+        },
+        "binaries": {
+          "type": "array",
+          "description": "List of multiple binaries to extract if the URL points to an archive.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "binary_path": {
+          "type": "string",
+          "description": "Relative path to the binary within the extracted archive."
+        },
+        "install_path": {
+          "type": "string",
+          "description": "Target directory for the binary."
+        }
+      },
+      "required": [
+        "name",
+        "url"
+      ]
+    },
+    "CustomSpec": {
+      "type": "object",
+      "description": "Inline shell-based installation with idempotency checks.",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Human-readable name for the custom task."
+        },
+        "install": {
+          "type": "string",
+          "description": "The shell command to execute for installation."
+        },
+        "installCheck": {
+          "type": "string",
+          "description": "A shell command used to verify if the tool is already installed. Exit code 0 means skip install."
+        }
+      },
+      "required": [
+        "name",
+        "install"
+      ]
+    },
+    "ScriptSpec": {
+      "type": "object",
+      "description": "Execution of an existing script file in the repository.",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Human-readable name for the script execution."
+        },
+        "script": {
+          "type": "string",
+          "description": "Relative path from the repository root to the script file (e.g., './init/01-tools.sh')."
+        }
+      },
+      "required": [
+        "name",
+        "script"
+      ]
+    },
+    "NVMSpec": {
+      "type": "object",
+      "description": "Configuration for installing and managing Node.js versions via NVM (Node Version Manager).",
+      "properties": {
+        "default": {
+          "type": "string",
+          "description": "The default Node.js version to use. Automatically installed if not present. Examples: 'lts/iron', 'latest', '18', '20.11.0'."
+        },
+        "versions": {
+          "type": "array",
+          "description": "Additional Node.js versions to install. The default version is automatically included, so it doesn't need to be listed here.",
+          "items": {
+            "type": "string",
+            "description": "Node.js version specifier. Examples: 'lts/hydrogen', 'latest', '16', '18.19.0'."
+          }
+        }
+      },
+      "required": [
+        "default"
+      ]
+    },
+    "SdkmanSpec": {
+      "oneOf": [
+        {
+          "type": "string",
+          "description": "Simple format: 'candidate:version' (e.g., 'java:17.0.2-tem', 'maven:3.9.6'). Installs the specified version and sets it as default.",
+          "pattern": "^[a-z0-9_-]+:[a-zA-Z0-9._-]+$"
+        },
+        {
+          "type": "object",
+          "description": "Detailed configuration for installing and managing SDK versions via SdkMan.",
+          "properties": {
+            "candidate": {
+              "type": "string",
+              "description": "The SDK candidate name. Examples: 'java', 'gradle', 'maven', 'kotlin', 'groovy'."
+            },
+            "version": {
+              "type": "string",
+              "description": "The default version to install and use. Examples: '17.0.2-tem', '8.5', '3.9.6'."
+            },
+            "versions": {
+              "type": "array",
+              "description": "Additional versions to install. If 'version' is specified, it's set as default. Otherwise, the first item in this array becomes the default.",
+              "items": {
+                "type": "string",
+                "description": "SDK version specifier. Examples: '11.0.12-tem', '7.6', '3.8.0'."
+              }
+            }
+          },
+          "required": [
+            "candidate"
+          ],
+          "anyOf": [
+            { "required": ["version"] },
+            { "required": ["versions"] }
+          ]
+        }
+      ]
+    }
+  }
+}

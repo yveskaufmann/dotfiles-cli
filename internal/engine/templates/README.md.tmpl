@@ -1,0 +1,37 @@
+# {{.GitHubHandle}}'s Dotfiles
+
+Personal dotfiles managed with [dotfiles](https://github.com/{{.GitHubHandle}}/dotfiles).
+
+## Quick Start
+
+```bash
+# Bootstrap your dotfiles
+dotfiles bootstrap --repository {{.RepositoryURL}}
+
+# Install tools
+dotfiles install
+
+# Create symlinks
+dotfiles link
+```
+
+## Structure
+
+- `bin/` - Custom scripts and utilities
+- `init/` - Tool installation configurations
+- `link/` - Files to be symlinked to home directory
+- `source/` - Shell scripts to be sourced
+- `caches/` - Cache directory (git-ignored)
+- `logs/` - Log directory (git-ignored)
+
+## Customization
+
+Edit the files in each directory to customize your setup:
+- Add tools to `init/` YAML files
+- Add symlinks to `link/` directory
+- Add shell configuration to `source/` directory
+- Add utility scripts to `bin/` directory
+
+## Documentation
+
+For more information, visit the [dotfiles documentation](https://github.com/{{.GitHubHandle}}/dotfiles).
