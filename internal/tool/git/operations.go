@@ -1,8 +1,10 @@
 package git
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"yv35.com/dotfiles/internal/util/sh"
 )
@@ -28,4 +30,14 @@ func IsRepository(path string) bool {
 		return false
 	}
 	return info.IsDir()
+}
+
+// GetRemoteURL returns the remote origin URL for the given repository
+// Returns empty string if the repository has no remote or if there's an error
+func GetRemoteURL(repoPath string) string {
+	output, err := sh.RunShellOutput(fmt.Sprintf("git -C %s remote get-url origin", repoPath))
+	if err != nil {
+		return ""
+	}
+	return strings.TrimSpace(output)
 }

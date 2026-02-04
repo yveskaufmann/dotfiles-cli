@@ -21,6 +21,7 @@ type BootstrapOptions struct {
 	LinkDryRun     bool
 	LinkResolution string
 	DotfilesPath   string
+	SaveConfig     func() error // Called after successful repository clone/pull
 }
 
 // Bootstrapper orchestrates the bootstrap process: clone/pull dotfiles, install tools, create symlinks
@@ -34,6 +35,7 @@ type Bootstrapper struct {
 	providers      []string
 	linkDryRun     bool
 	linkResolution LinkConflictResolution
+	saveConfig     func() error
 }
 
 // NewBootstrapper creates a new Bootstrapper instance
@@ -67,6 +69,7 @@ func NewBootstrapper(repositoryURL string, opts BootstrapOptions) *Bootstrapper 
 		providers:      opts.Providers,
 		linkDryRun:     opts.LinkDryRun,
 		linkResolution: resolution,
+		saveConfig:     opts.SaveConfig,
 	}
 }
 
@@ -176,6 +179,16 @@ func (b *Bootstrapper) EnsureRepository() error {
 	cacheDir := filepath.Join(b.dotfilesPath, ".caches")
 	if err := fsutil.EnsureDirectory(cacheDir); err != nil {
 		return fmt.Errorf("failed to create cache directory: %w", err)
+	}
+
+	// Save config after successful clone
+	if b.saveConfig != nil {
+		if err := b.saveConfig(); err != nil {
+			fmt.Printf("%s⚠️  Warning: Failed to save config: %v%s\n",
+				theme.Colorize(theme.ColorYellow),
+				err,
+				theme.Colorize(theme.ColorReset))
+		}
 	}
 
 	return nil
