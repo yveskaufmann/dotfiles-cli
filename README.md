@@ -13,7 +13,7 @@ Dotfiles manager and bootstrap tool for configuring development environments acr
 Install the dotfiles CLI tool:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/yveskaufmann/.dotfiles/master/scripts/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/yveskaufmann/.dotfiles/main/scripts/install.sh | sh
 ```
 
 Then bootstrap your dotfiles:
