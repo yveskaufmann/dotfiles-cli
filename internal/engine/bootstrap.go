@@ -153,6 +153,18 @@ func (b *Bootstrapper) Execute() error {
 // EnsureRepository ensures the dotfiles repository exists
 // Clones if missing, pulls if exists and runPull is true
 func (b *Bootstrapper) EnsureRepository() error {
+	// Helper function to save config with error handling
+	saveConfigWithWarning := func() {
+		if b.saveConfig != nil {
+			if err := b.saveConfig(); err != nil {
+				fmt.Printf("%s⚠️  Warning: Failed to save config: %v%s\n",
+					theme.Colorize(theme.ColorYellow),
+					err,
+					theme.Colorize(theme.ColorReset))
+			}
+		}
+	}
+
 	if git.IsRepository(b.dotfilesPath) {
 		fmt.Printf("Repository already exists at %s\n", pathutil.MinimizePath(b.dotfilesPath))
 
@@ -165,6 +177,9 @@ func (b *Bootstrapper) EnsureRepository() error {
 		} else {
 			fmt.Printf("Skipping pull (--no-pull specified)\n")
 		}
+
+		// Save config for existing repository (handles case where repo was manually cloned)
+		saveConfigWithWarning()
 		return nil
 	}
 
@@ -182,15 +197,7 @@ func (b *Bootstrapper) EnsureRepository() error {
 	}
 
 	// Save config after successful clone
-	if b.saveConfig != nil {
-		if err := b.saveConfig(); err != nil {
-			fmt.Printf("%s⚠️  Warning: Failed to save config: %v%s\n",
-				theme.Colorize(theme.ColorYellow),
-				err,
-				theme.Colorize(theme.ColorReset))
-		}
-	}
-
+	saveConfigWithWarning()
 	return nil
 }
 
