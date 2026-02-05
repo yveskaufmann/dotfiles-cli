@@ -2,6 +2,7 @@
 # install.sh - Install dotfiles binary from GitHub releases
 # Usage: curl -fsSL https://raw.githubusercontent.com/yveskaufmann/.dotfiles/master/scripts/install.sh | sh
 # Usage with flags: curl -fsSL https://raw.githubusercontent.com/yveskaufmann/.dotfiles/master/scripts/install.sh | sh -s -- --home
+# Usage with token: curl -fsSL https://raw.githubusercontent.com/yveskaufmann/.dotfiles/master/scripts/install.sh | sh -s -- --github-token YOUR_TOKEN
 
 set -e
 
@@ -12,6 +13,7 @@ BINARY_NAME="dotfiles"
 INSTALL_DIR=""
 FORCE_HOME=false
 FORCE_SYSTEM=false
+GITHUB_TOKEN=""
 
 # Colors
 RED='\033[0;31m'
@@ -60,13 +62,22 @@ while [ $# -gt 0 ]; do
             INSTALL_DIR="$2"
             shift 2
             ;;
+        --github-token)
+            GITHUB_TOKEN="$2"
+            shift 2
+            ;;
         *)
             print_error "Unknown option: $1"
-            echo "Usage: $0 [--home] [--system] [--dir DIR]"
+            echo "Usage: $0 [--home] [--system] [--dir DIR] [--github-token TOKEN]"
             exit 1
             ;;
     esac
 done
+
+# Check for GITHUB_TOKEN environment variable if no token parameter provided
+if [ -z "$GITHUB_TOKEN" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
+    GITHUB_TOKEN="${GITHUB_TOKEN:-}"
+fi
 
 # Detect OS
 detect_os() {
@@ -86,7 +97,7 @@ detect_os() {
             exit 1
             ;;
     esac
-    echo "$OS"
+    return 0
 }
 
 # Detect architecture
@@ -104,7 +115,7 @@ detect_arch() {
             exit 1
             ;;
     esac
-    echo "$ARCH"
+    return 0
 }
 
 # Determine install directory
@@ -124,8 +135,12 @@ determine_install_dir() {
     elif [ "$FORCE_HOME" = true ]; then
         echo "$HOME/.local/bin"
     else
-        # Default: try user-local first
-        echo "$HOME/.local/bin"
+        # Default: try system directory first, fallback to user home if not writable
+        if [ -w "/usr/local/bin" ]; then
+            echo "/usr/local/bin"
+        else
+            echo "$HOME/.local/bin"
+        fi
     fi
 }
 
@@ -143,17 +158,30 @@ is_in_path() {
 
 # Get latest release version
 get_latest_version() {
-    print_info "Fetching latest release version..."
     
     # Try to fetch from GitHub API
     if command -v curl >/dev/null 2>&1; then
-        VERSION=$(curl -fsSL "https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/releases/latest" | \
-                  grep '"tag_name":' | \
-                  sed -E 's/.*"tag_name": "([^"]+)".*/\1/')
+        if [ -n "$GITHUB_TOKEN" ]; then
+            VERSION=$(curl -fsSL -H "Authorization: Bearer $GITHUB_TOKEN" \
+                      "https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/releases/latest" | \
+                      grep '"tag_name":' | \
+                      sed -E 's/.*"tag_name": "([^"]+)".*/\1/')
+        else
+            VERSION=$(curl -fsSL "https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/releases/latest" | \
+                      grep '"tag_name":' | \
+                      sed -E 's/.*"tag_name": "([^"]+)".*/\1/')
+        fi
     elif command -v wget >/dev/null 2>&1; then
-        VERSION=$(wget -qO- "https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/releases/latest" | \
-                  grep '"tag_name":' | \
-                  sed -E 's/.*"tag_name": "([^"]+)".*/\1/')
+        if [ -n "$GITHUB_TOKEN" ]; then
+            VERSION=$(wget --header="Authorization: Bearer $GITHUB_TOKEN" \
+                      -qO- "https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/releases/latest" | \
+                      grep '"tag_name":' | \
+                      sed -E 's/.*"tag_name": "([^"]+)".*/\1/')
+        else
+            VERSION=$(wget -qO- "https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/releases/latest" | \
+                      grep '"tag_name":' | \
+                      sed -E 's/.*"tag_name": "([^"]+)".*/\1/')
+        fi
     else
         print_error "Neither curl nor wget found. Please install one of them."
         exit 1
@@ -164,40 +192,98 @@ get_latest_version() {
         exit 1
     fi
 
-    echo "$VERSION"
+    VERSION="${VERSION#v}"  
+
+    return 0
 }
 
 # Download and install
 install_binary() {
-    OS=$(detect_os)
-    ARCH=$(detect_arch)
-    VERSION=$(get_latest_version)
+    detect_os
+    detect_arch
+    get_latest_version
+
     INSTALL_DIR=$(determine_install_dir)
 
     print_info "Detected: OS=$OS, ARCH=$ARCH"
-    print_info "Latest version: $VERSION"
+    print_info "Latest version: v$VERSION"
     print_info "Install directory: $INSTALL_DIR"
 
     # Create temp directory
     TEMP_DIR=$(mktemp -d)
     cd "$TEMP_DIR"
 
-    # Construct download URL
+    # Construct archive name
     ARCHIVE_NAME="${BINARY_NAME}_${VERSION}_${OS}_${ARCH}"
     if [ "$OS" = "windows" ]; then
         ARCHIVE_EXT="zip"
     else
         ARCHIVE_EXT="tar.gz"
     fi
-    DOWNLOAD_URL="https://github.com/${REPO_OWNER}/${REPO_NAME}/releases/download/${VERSION}/${ARCHIVE_NAME}.${ARCHIVE_EXT}"
 
-    print_info "Downloading from: $DOWNLOAD_URL"
-
-    # Download archive
-    if command -v curl >/dev/null 2>&1; then
-        curl -fsSL -o "archive.${ARCHIVE_EXT}" "$DOWNLOAD_URL"
+    # Download archive - use API endpoint when token is provided
+    if [ -n "$GITHUB_TOKEN" ]; then
+        print_info "Fetching release asset info..."
+        
+        # Get release info via API to find asset ID
+        RELEASE_API_URL="https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/releases/tags/v${VERSION}"
+        
+        if command -v curl >/dev/null 2>&1; then
+            RELEASE_JSON=$(curl -fsSL -H "Authorization: Bearer $GITHUB_TOKEN" "$RELEASE_API_URL")
+        elif command -v wget >/dev/null 2>&1; then
+            RELEASE_JSON=$(wget --header="Authorization: Bearer $GITHUB_TOKEN" -qO- "$RELEASE_API_URL")
+        else
+            print_error "Neither curl nor wget found. Please install one of them."
+            exit 1
+        fi
+        
+        # Extract asset ID for matching archive name using awk
+        ASSET_NAME_PATTERN="${ARCHIVE_NAME}.${ARCHIVE_EXT}"
+        ASSET_ID=$(echo "$RELEASE_JSON" | awk -v pattern="$ASSET_NAME_PATTERN" '
+            /"id":/ { 
+                id = $0
+                gsub(/[^0-9]/, "", id)
+            }
+            /"name":/ { 
+                if (index($0, pattern) > 0 && id != "") {
+                    print id
+                    exit
+                }
+            }
+        ')
+        
+        if [ -z "$ASSET_ID" ]; then
+            print_error "Failed to find asset ID for ${ASSET_NAME_PATTERN}"
+            exit 1
+        fi
+        
+        print_info "Found asset ID: $ASSET_ID"
+        DOWNLOAD_URL="https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/releases/assets/${ASSET_ID}"
+        print_info "Downloading from API: $DOWNLOAD_URL"
+        
+        # Download using API endpoint with Accept header for binary content
+        if command -v curl >/dev/null 2>&1; then
+            curl -fsSL -H "Authorization: Bearer $GITHUB_TOKEN" \
+                 -H "Accept: application/octet-stream" \
+                 -o "archive.${ARCHIVE_EXT}" "$DOWNLOAD_URL"
+        elif command -v wget >/dev/null 2>&1; then
+            wget --header="Authorization: Bearer $GITHUB_TOKEN" \
+                 --header="Accept: application/octet-stream" \
+                 -q -O "archive.${ARCHIVE_EXT}" "$DOWNLOAD_URL"
+        fi
     else
-        wget -q -O "archive.${ARCHIVE_EXT}" "$DOWNLOAD_URL"
+        # No token - use direct download URL (works for public repos)
+        DOWNLOAD_URL="https://github.com/${REPO_OWNER}/${REPO_NAME}/releases/download/v${VERSION}/${ARCHIVE_NAME}.${ARCHIVE_EXT}"
+        print_info "Downloading from: $DOWNLOAD_URL"
+        
+        if command -v curl >/dev/null 2>&1; then
+            curl -fsSL -o "archive.${ARCHIVE_EXT}" "$DOWNLOAD_URL"
+        elif command -v wget >/dev/null 2>&1; then
+            wget -q -O "archive.${ARCHIVE_EXT}" "$DOWNLOAD_URL"
+        else
+            print_error "Neither curl nor wget found. Please install one of them."
+            exit 1
+        fi
     fi
 
     if [ ! -f "archive.${ARCHIVE_EXT}" ]; then
@@ -231,6 +317,9 @@ install_binary() {
         exit 1
     fi
 
+    # Make binary executable
+    chmod +x "$BINARY_PATH"
+
     # Create install directory if it doesn't exist
     if [ ! -d "$INSTALL_DIR" ]; then
         print_info "Creating directory: $INSTALL_DIR"
@@ -240,7 +329,6 @@ install_binary() {
     # Install binary
     print_info "Installing binary to $INSTALL_DIR/$BINARY_NAME..."
     cp "$BINARY_PATH" "$INSTALL_DIR/$BINARY_NAME"
-    chmod +x "$INSTALL_DIR/$BINARY_NAME"
 
     # Verify installation
     if [ -x "$INSTALL_DIR/$BINARY_NAME" ]; then
