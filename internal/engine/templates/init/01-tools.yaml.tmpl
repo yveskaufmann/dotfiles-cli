@@ -12,8 +12,11 @@ groups:
       - jq
     
   - name: GitHub CLI
-    github_release:
-      - name: gh
-        repo: cli/cli
-        asset_pattern: {os}_{arch}\.tar\.gz$
-        binary_path: bin/gh
+    ppa:
+      - name: "gh-cli"
+        uri: "https://cli.github.com/packages"
+        key: https://cli.github.com/packages/githubcli-archive-keyring.gpg
+        suites: stable
+        pkgs: ["gh"]
+    brew:
+      - gh
