@@ -29,6 +29,14 @@ type DependencyGroup struct {
 	Custom      []CustomSpec  `yaml:"custom,omitempty"`
 	NVM         []NVMSpec     `yaml:"nvm,omitempty"`
 	Sdkman      []SdkmanSpec  `yaml:"sdkman,omitempty"`
+	RustUp      []RustUpSpec  `yaml:"rustup,omitempty"`
+}
+
+type RustUpSpec struct {
+	Targets          []string `yaml:"targets,omitempty"`
+	Components       []string `yaml:"components,omitempty"`
+	Toolchains       []string `yaml:"toolchains,omitempty"`
+	DefaultToolchain string   `yaml:"default_toolchain,omitempty"`
 }
 
 type PPASpec struct {
