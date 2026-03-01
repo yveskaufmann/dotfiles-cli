@@ -5,6 +5,7 @@ import (
 
 	"yv35.com/dotfiles/internal/config"
 	"yv35.com/dotfiles/internal/types"
+	"yv35.com/dotfiles/internal/util/osutil"
 	"yv35.com/dotfiles/internal/util/sh"
 )
 
@@ -34,6 +35,11 @@ func (p *Provider) Install(group config.DependencyGroup, onComplete types.OnTask
 
 	for _, customSpec := range group.Custom {
 		name := customSpec.Name
+
+		if customSpec.Systems != "" && !osutil.Is(osutil.OSType(customSpec.Systems)) {
+			fmt.Printf("⏭️  Skipping custom spec %s (system mismatch: %s)\n", customSpec.Name, customSpec.Systems)
+			continue
+		}
 
 		// Check if already installed
 		if customSpec.InstallCheck != "" {

@@ -156,6 +156,7 @@ type CustomSpec struct {
 	Install      string `yaml:"install"`
 	Update       string `yaml:"update,omitempty"`
 	InstallCheck string `yaml:"installCheck,omitempty"`
+	Systems      string `yaml:"systems,omitempty"`
 }
 
 type NVMSpec struct {
