@@ -21,7 +21,6 @@ type BootstrapOptions struct {
 	LinkDryRun     bool
 	LinkResolution string
 	DotfilesPath   string
-	SaveConfig     func() error // Called after successful repository clone/pull
 }
 
 // Bootstrapper orchestrates the bootstrap process: clone/pull dotfiles, install tools, create symlinks
@@ -35,7 +34,6 @@ type Bootstrapper struct {
 	providers      []string
 	linkDryRun     bool
 	linkResolution LinkConflictResolution
-	saveConfig     func() error
 }
 
 // NewBootstrapper creates a new Bootstrapper instance
@@ -69,7 +67,6 @@ func NewBootstrapper(repositoryURL string, opts BootstrapOptions) *Bootstrapper 
 		providers:      opts.Providers,
 		linkDryRun:     opts.LinkDryRun,
 		linkResolution: resolution,
-		saveConfig:     opts.SaveConfig,
 	}
 }
 
@@ -153,18 +150,6 @@ func (b *Bootstrapper) Execute() error {
 // EnsureRepository ensures the dotfiles repository exists
 // Clones if missing, pulls if exists and runPull is true
 func (b *Bootstrapper) EnsureRepository() error {
-	// Helper function to save config with error handling
-	saveConfigWithWarning := func() {
-		if b.saveConfig != nil {
-			if err := b.saveConfig(); err != nil {
-				fmt.Printf("%s⚠️  Warning: Failed to save config: %v%s\n",
-					theme.Colorize(theme.ColorYellow),
-					err,
-					theme.Colorize(theme.ColorReset))
-			}
-		}
-	}
-
 	if git.IsRepository(b.dotfilesPath) {
 		fmt.Printf("Repository already exists at %s\n", pathutil.MinimizePath(b.dotfilesPath))
 
@@ -178,8 +163,6 @@ func (b *Bootstrapper) EnsureRepository() error {
 			fmt.Printf("Skipping pull (--no-pull specified)\n")
 		}
 
-		// Save config for existing repository (handles case where repo was manually cloned)
-		saveConfigWithWarning()
 		return nil
 	}
 
@@ -196,8 +179,6 @@ func (b *Bootstrapper) EnsureRepository() error {
 		return fmt.Errorf("failed to create cache directory: %w", err)
 	}
 
-	// Save config after successful clone
-	saveConfigWithWarning()
 	return nil
 }
 

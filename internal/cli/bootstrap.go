@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"github.com/spf13/cobra"
-	"yv35.com/dotfiles/internal/config"
 	executor "yv35.com/dotfiles/internal/engine"
 	"yv35.com/dotfiles/internal/theme"
 	"yv35.com/dotfiles/internal/tool/git"
@@ -90,14 +89,6 @@ func runBootstrap(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	// Create config save callback
-	saveConfigFn := func() error {
-		cfg := &config.BootstrapConfig{}
-		cfg.Dotfiles.Repository.URL = repositoryURL
-		cfg.Dotfiles.Repository.Type = detectRepositoryType(repositoryURL)
-		return config.SaveBootstrapConfig(cfg)
-	}
-
 	// Create bootstrapper
 	opts := executor.BootstrapOptions{
 		RunPull:        runPull,
@@ -107,53 +98,28 @@ func runBootstrap(cmd *cobra.Command, args []string) error {
 		Providers:      bootstrapProviders,
 		LinkDryRun:     bootstrapLinkDryRun,
 		LinkResolution: bootstrapLinkResolution,
-		SaveConfig:     saveConfigFn,
 	}
 
 	bootstrapper := executor.NewBootstrapper(repositoryURL, opts)
 
 	// Execute bootstrap with retry on clone failure
 	err = bootstrapper.Execute()
-	if err != nil && strings.Contains(err.Error(), "failed to clone repository") {
-		// Offer to change repository URL
-		fmt.Printf("\n%s⚠️  Clone failed: %v%s\n\n",
-			theme.Colorize(theme.ColorRed),
-			err,
-			theme.Colorize(theme.ColorReset))
-
-		newURL, promptErr := promptRepositoryURL(repositoryURL, true)
-		if promptErr != nil {
-			return err // Return original error
+	if err != nil {
+		if strings.Contains(err.Error(), "failed to clone repository") {
+			// Offer to change repository URL
+			fmt.Printf("\n%s⚠️  Clone failed: %v%s\n\n",
+				theme.Colorize(theme.ColorRed),
+				err,
+				theme.Colorize(theme.ColorReset))
+		} else {
+			fmt.Printf("\n%s❌ %v%s\n\n",
+				theme.Colorize(theme.ColorRed),
+				err,
+				theme.Colorize(theme.ColorReset))
 		}
-
-		if newURL != "" && newURL != repositoryURL {
-			// Save new URL to config
-			cfg := &config.BootstrapConfig{}
-			cfg.Dotfiles.Repository.URL = newURL
-			cfg.Dotfiles.Repository.Type = detectRepositoryType(newURL)
-			if saveErr := config.SaveBootstrapConfig(cfg); saveErr != nil {
-				fmt.Printf("%s⚠️  Warning: Failed to save config: %v%s\n",
-					theme.Colorize(theme.ColorYellow),
-					saveErr,
-					theme.Colorize(theme.ColorReset))
-			}
-
-			// Retry with new URL - need to update saveConfigFn with new URL
-			newSaveConfigFn := func() error {
-				cfg := &config.BootstrapConfig{}
-				cfg.Dotfiles.Repository.URL = newURL
-				cfg.Dotfiles.Repository.Type = detectRepositoryType(newURL)
-				return config.SaveBootstrapConfig(cfg)
-			}
-			opts.SaveConfig = newSaveConfigFn
-			bootstrapper = executor.NewBootstrapper(newURL, opts)
-			return bootstrapper.Execute()
-		}
-
-		return err
 	}
 
-	return err
+	return nil
 }
 
 // determineSteps determines which bootstrap steps should run based on flags
@@ -172,29 +138,16 @@ func determineSteps() (runInstall, runLink bool) {
 
 // getRepositoryURL determines the repository URL from flag, config, or prompt
 func getRepositoryURL() (string, error) {
-	// 1. Check flag
 	if bootstrapRepository != "" {
 		return bootstrapRepository, nil
 	}
 
-	// 2. Check if repository already exists and get URL from git remote
 	if git.IsRepository(DOTFILES_PATH) {
 		if remoteURL := git.GetRemoteURL(DOTFILES_PATH); remoteURL != "" {
 			return remoteURL, nil
 		}
 	}
 
-	// 3. Check config file
-	cfg, err := config.LoadBootstrapConfig()
-	if err != nil {
-		return "", fmt.Errorf("failed to load config: %w", err)
-	}
-
-	if cfg != nil && cfg.Dotfiles.Repository.URL != "" {
-		return cfg.Dotfiles.Repository.URL, nil
-	}
-
-	// 4. Prompt user
 	return promptRepositoryURL("", false)
 }
 
@@ -235,12 +188,4 @@ func promptRepositoryURL(currentURL string, isRetry bool) (string, error) {
 	}
 
 	return url, nil
-}
-
-// detectRepositoryType detects if the repository URL is ssh or https
-func detectRepositoryType(url string) string {
-	if strings.HasPrefix(url, "git@") || strings.HasPrefix(url, "ssh://") {
-		return "ssh"
-	}
-	return "https"
 }
