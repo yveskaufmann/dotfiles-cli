@@ -107,7 +107,7 @@ func InstallBinary(srcPath, targetDir, name string) error {
 
 	// Autodetect if sudo is needed (if outside home)
 	homeDir := os.Getenv("HOME")
-	useSudo := !strings.HasPrefix(targetDir, homeDir)
+	useSudo := !strings.HasPrefix(targetDir, homeDir) || strings.HasPrefix(srcPath, "/var")
 
 	mkdirCmd := "mkdir -p"
 	moveCmd := "mv"
