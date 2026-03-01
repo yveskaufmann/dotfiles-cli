@@ -10,7 +10,17 @@ Dotfiles manager and bootstrap tool for configuring development environments acr
 
 ## Quick Install
 
-Install the dotfiles CLI tool:
+Install from your private repository (requires GitHub CLI for authentication):
+
+```bash
+  cd ~/.dotfiles
+  git clone git@github.com:yveskaufmann/.dotfiles.git . 
+./scripts/install.sh --github-token "$(gh auth token)"
+```
+
+Install the dotfiles CLI tool from public repository (no authentication required):
+# TODO: I need a location where I can publish the install script without authentication, or make it available in a public repository. 
+# For now, I will need to clone the repository first and run the install script locally.
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/yveskaufmann/.dotfiles/main/scripts/install.sh | sh
