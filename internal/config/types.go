@@ -13,23 +13,24 @@ type Config struct {
 }
 
 type DependencyGroup struct {
-	Name        string        `yaml:"name"`
-	Profile     string        `yaml:"profile,omitempty"`
-	Systems     string        `yaml:"systems,omitempty"`
-	Apt         []string      `yaml:"apt,omitempty"`
-	PPA         []PPASpec     `yaml:"ppa,omitempty"`
-	Snap        []SnapSpec    `yaml:"snap,omitempty"`
-	Pipx        []PipxSpec    `yaml:"pipx,omitempty"`
-	NPM         []NPMSpec     `yaml:"npm,omitempty"`
-	Brew        []BrewSpec    `yaml:"brew,omitempty"`
-	BrewTapSpec []BrewTapSpec `yaml:"brew_taps,omitempty"`
-	Github      []GithubSpec  `yaml:"github_release,omitempty"`
-	Binary      []BinarySpec  `yaml:"binary,omitempty"`
-	Script      []ScriptSpec  `yaml:"script,omitempty"`
-	Custom      []CustomSpec  `yaml:"custom,omitempty"`
-	NVM         []NVMSpec     `yaml:"nvm,omitempty"`
-	Sdkman      []SdkmanSpec  `yaml:"sdkman,omitempty"`
-	RustUp      []RustUpSpec  `yaml:"rustup,omitempty"`
+	Name        string          `yaml:"name"`
+	Profile     string          `yaml:"profile,omitempty"`
+	Systems     string          `yaml:"systems,omitempty"`
+	Apt         []string        `yaml:"apt,omitempty"`
+	PPA         []PPASpec       `yaml:"ppa,omitempty"`
+	Snap        []SnapSpec      `yaml:"snap,omitempty"`
+	Pipx        []PipxSpec      `yaml:"pipx,omitempty"`
+	NPM         []NPMSpec       `yaml:"npm,omitempty"`
+	Brew        []BrewSpec      `yaml:"brew,omitempty"`
+	BrewTapSpec []BrewTapSpec   `yaml:"brew_taps,omitempty"`
+	Github      []GithubSpec    `yaml:"github_release,omitempty"`
+	Binary      []BinarySpec    `yaml:"binary,omitempty"`
+	Script      []ScriptSpec    `yaml:"script,omitempty"`
+	Custom      []CustomSpec    `yaml:"custom,omitempty"`
+	NVM         []NVMSpec       `yaml:"nvm,omitempty"`
+	Sdkman      []SdkmanSpec    `yaml:"sdkman,omitempty"`
+	RustUp      []RustUpSpec    `yaml:"rustup,omitempty"`
+	Jetbrains   []JetbrainsSpec `yaml:"jetbrains,omitempty"`
 }
 
 type RustUpSpec struct {
@@ -168,6 +169,12 @@ type SdkmanSpec struct {
 	Candidate string   `yaml:"candidate,omitempty"`
 	Version   string   `yaml:"version,omitempty"`
 	Versions  []string `yaml:"versions,omitempty"`
+}
+
+type JetbrainsSpec struct {
+	Name    string `yaml:"name,omitempty"`
+	IDE     string `yaml:"ide"`
+	Version string `yaml:"version,omitempty"`
 }
 
 func (s *SdkmanSpec) UnmarshalYAML(node *yaml.Node) error {

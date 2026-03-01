@@ -8,6 +8,7 @@ import (
 	"yv35.com/dotfiles/internal/provider/custom"
 	"yv35.com/dotfiles/internal/provider/example"
 	"yv35.com/dotfiles/internal/provider/github"
+	"yv35.com/dotfiles/internal/provider/jetbrains"
 	"yv35.com/dotfiles/internal/provider/npm"
 	"yv35.com/dotfiles/internal/provider/nvm"
 	"yv35.com/dotfiles/internal/provider/pipx"
@@ -26,6 +27,7 @@ func registerProviders() {
 	provider.RegisterProviders(npm.NewProvider())
 	provider.RegisterProviders(snap.NewProvider())
 	provider.RegisterProviders(binary.NewProvider())
+	provider.RegisterProviders(jetbrains.NewProvider())
 	provider.RegisterProviders(script.NewProvider())
 	provider.RegisterProviders(custom.NewProvider())
 	provider.RegisterProviders(example.NewProvider())
