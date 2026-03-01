@@ -11,6 +11,7 @@ var (
 	CACHE_PATH        = path.Join(DOTFILES_PATH, ".caches")
 	BACKUP_PATH       = path.Join(DOTFILES_PATH, "backups", time.Now().Format("2006_01_02-15_04_05"))
 	INIT_SCRIPTS_PATH = path.Join(DOTFILES_PATH, "init")
+	LOGS_PATH         = path.Join(DOTFILES_PATH, "logs")
 )
 
 func init() {
@@ -18,4 +19,5 @@ func init() {
 	BACKUP_PATH = os.ExpandEnv(BACKUP_PATH)
 	CACHE_PATH = os.ExpandEnv(CACHE_PATH)
 	INIT_SCRIPTS_PATH = os.ExpandEnv(INIT_SCRIPTS_PATH)
+	LOGS_PATH = os.ExpandEnv(LOGS_PATH)
 }

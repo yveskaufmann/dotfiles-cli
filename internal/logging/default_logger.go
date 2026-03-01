@@ -6,6 +6,8 @@ import (
 	"os"
 	"os/signal"
 	"path"
+
+	"yv35.com/dotfiles/internal/cli"
 )
 
 func init() {
@@ -17,12 +19,7 @@ func init() {
 		env = "development"
 	}
 
-	cwd, err := os.Getwd()
-	if err != nil {
-		panic(fmt.Errorf("failed to setup logging: %v", err))
-	}
-
-	logPath := path.Join(cwd, "logs/log.txt")
+	logPath := path.Join(cli.LOGS_PATH, "log.txt")
 
 	// Ensure logs directory exists
 	logDir := path.Dir(logPath)
