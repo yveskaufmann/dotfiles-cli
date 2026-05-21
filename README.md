@@ -7,9 +7,19 @@ It keeps executable logic separate from personal shell/config content.
 ## Motivation
 
 - Keep developer tooling reproducible across laptops, workstations, and fresh installs.
-- Manage tool setup declaratively so the same config can be applied on different OSes.
-- Reduce drift between machines by reusing one installation definition (`init/*.yaml`).
-- Keep personal dotfiles and executable bootstrap logic in separate repositories.
+- Manage tool setup declaratively (as YAML) so the same configuration applies across different OSes without manual duplication.
+- Version control your tool setup in your own dotfiles repository, giving you a complete audit trail and easy rollback of configuration changes.
+- Reduce drift between machines by maintaining a single source of truth for tool versions and setup procedures.
+- Keep personal dotfiles and executable bootstrap logic in separate repositories for clean separation of concerns.
+
+## What are Dotfiles?
+
+Dotfiles are configuration files for Unix tools (like `.bashrc`, `.gitconfig`, `.zshrc`). They typically live in your home directory and start with a dot (hence "dotfiles"). A dotfiles repository is a version-controlled collection of these configurations plus setup scripts. By storing them in Git, you get:
+
+- **Consistency**: Replicate your exact environment across all machines
+- **History**: Track changes to your configuration over time
+- **Reproducibility**: Spin up new machines with tested, known-good settings
+- **Collaboration**: Share configurations across your team or keep personal variations
 
 ## What It Does
 
