@@ -2,6 +2,12 @@
 
 `dotfiles-cli` is a Go-based bootstrap tool for installing developer tooling and linking dotfiles from a separate configuration repository.
 
+## V1 Scope
+
+- The local dotfiles workspace is fixed to `$HOME/.dotfiles`.
+- Repository source is generic and can be provided with `--repository`.
+- Configurable local paths are intentionally deferred to a later version.
+
 ## What It Does
 
 - clones or updates a dotfiles repository
@@ -20,6 +26,7 @@ make build
 
 ```bash
 dotfiles bootstrap
+dotfiles bootstrap --repository git@github.com:user/dotfiles.git
 dotfiles install --profile default
 dotfiles link --dry-run
 ```

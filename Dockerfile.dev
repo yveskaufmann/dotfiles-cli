@@ -24,7 +24,7 @@ RUN useradd -m -s /bin/bash user && \
 RUN echo "1"
 COPY scripts/install.sh /tmp/install.sh
 RUN --mount=type=secret,id=github_token \
-     sudo sh /tmp/install.sh --github-token "$(cat /run/secrets/github_token)"
+    sudo sh /tmp/install.sh --github-token "$(cat /run/secrets/github_token)"
 
 USER user
 WORKDIR /home/user/

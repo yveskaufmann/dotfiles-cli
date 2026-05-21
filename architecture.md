@@ -10,6 +10,13 @@ The CLI is intentionally small and structured around three core actions:
 2. `install` reads YAML tool definitions from `init/*.yaml` and runs provider-backed installation steps.
 3. `link` creates symlinks from the configuration repository's `link/` directory into the user's home directory.
 
+## Runtime Assumptions (V1)
+
+- Local workspace path is fixed at `$HOME/.dotfiles`.
+- `bootstrap --repository <url>` explicitly selects the remote source.
+- Without `--repository`, bootstrap tries to reuse `origin` from the local `$HOME/.dotfiles` repository and prompts if none is available.
+- Local path customization is postponed to a later version.
+
 ## Main Components
 
 ```mermaid

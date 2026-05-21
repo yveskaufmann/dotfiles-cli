@@ -28,7 +28,7 @@ builds:
 
 archives:
   - id: dotfiles
-    formats: [ 'tar.gz' ]
+    formats: ["tar.gz"]
     name_template: >-
       {{ .ProjectName }}_
       {{- .Version }}_
@@ -36,13 +36,13 @@ archives:
       {{- .Arch }}
     format_overrides:
       - goos: windows
-        formats: [ 'zip' ]
+        formats: ["zip"]
     files:
       - README.md
       - LICENSE
 
 checksum:
-  name_template: 'checksums.txt'
+  name_template: "checksums.txt"
 
 snapshot:
   version_template: "{{ incpatch .Version }}-next"
@@ -51,9 +51,9 @@ changelog:
   sort: asc
   filters:
     exclude:
-      - '^docs:'
-      - '^test:'
-      - '^chore:'
+      - "^docs:"
+      - "^test:"
+      - "^chore:"
       - typo
 
 release:
