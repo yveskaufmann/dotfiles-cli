@@ -105,11 +105,10 @@ func (p *Provider) installComponents(components []string, onComplete types.OnTas
 	for _, comp := range components {
 		taskLabel := fmt.Sprintf("component %s", comp)
 
-		if err := sh.RunShell(fmt.Sprintf("rustup component list --installed | grep %s > /dev/null 2>&1", comp)); err != nil {
+		if err := sh.RunShell(fmt.Sprintf("rustup component list --installed | grep %s > /dev/null 2>&1", comp)); err == nil {
 			onComplete(types.TaskResult{
 				Name:   taskLabel,
 				Status: types.StatusSkipped,
-				Error:  fmt.Errorf("already installed"),
 			})
 			continue
 		}
@@ -137,11 +136,10 @@ func (p *Provider) installTargets(targets []string, onComplete types.OnTaskCompl
 	for _, target := range targets {
 
 		taskLabel := fmt.Sprintf("target %s", target)
-		if err := sh.RunShell(fmt.Sprintf("rustup target list --installed | grep %s > /dev/null 2>&1", target)); err != nil {
+		if err := sh.RunShell(fmt.Sprintf("rustup target list --installed | grep %s > /dev/null 2>&1", target)); err == nil {
 			onComplete(types.TaskResult{
 				Name:   taskLabel,
 				Status: types.StatusSkipped,
-				Error:  fmt.Errorf("already installed"),
 			})
 			continue
 		}
@@ -170,11 +168,10 @@ func (p *Provider) installToolchains(defaultToolchain string, toolchains []strin
 	for _, toolchain := range toolchains {
 
 		taskLabel := fmt.Sprintf("toolchain %s", toolchain)
-		if err := sh.RunShell(fmt.Sprintf("rustup toolchain list | grep %s > /dev/null 2>&1", toolchain)); err != nil {
+		if err := sh.RunShell(fmt.Sprintf("rustup toolchain list | grep %s > /dev/null 2>&1", toolchain)); err == nil {
 			onComplete(types.TaskResult{
 				Name:   taskLabel,
 				Status: types.StatusSkipped,
-				Error:  fmt.Errorf("already installed"),
 			})
 			continue
 		}

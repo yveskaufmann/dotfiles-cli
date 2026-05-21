@@ -66,7 +66,7 @@ func TestProvider_InstallComponents(t *testing.T) {
 			t.Errorf("Task %s failed: %v", result.Name, result.Error)
 		}
 
-		if result.Status != types.StatusSuccess {
+		if result.Status == types.StatusFailed {
 			t.Errorf("Task %s did not succeed: status %v", result.Name, result.Status)
 		}
 
@@ -76,7 +76,7 @@ func TestProvider_InstallComponents(t *testing.T) {
 	p.Install(config.DependencyGroup{
 		RustUp: []config.RustUpSpec{
 			{
-				Components: []string{"clobby", "rustfmt"},
+				Components: []string{"clippy", "rustfmt"},
 			},
 		},
 	}, onComplete)
