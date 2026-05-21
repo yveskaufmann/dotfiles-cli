@@ -30,6 +30,18 @@ This page is the shared baseline for agents working in this repository.
 3. Update provider docs when config behavior changes.
 4. Track progress and notes in `.agents/` files.
 
+## Provider Changes
+
+When modifying provider interfaces, adding new providers, or removing providers:
+
+1. **Update the schema** in `internal/config/types.go` to reflect provider struct changes
+2. **Update the provider registry** in the provider implementation to register/unregister providers
+3. **Update documentation**:
+   - If adding/removing providers: update [docs/providers/index.md](providers/index.md) provider list
+   - If changing provider config format: update the corresponding [docs/providers/*.md](providers/) page
+   - If adding a new provider: create new `docs/providers/<provider>.md` page
+4. **Validate consistency**: Run `make build` and tests to ensure schema and implementation remain synchronized
+
 ## Validation Order
 
 1. Build (`make build`)
