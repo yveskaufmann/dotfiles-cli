@@ -158,33 +158,69 @@ is_in_path() {
 
 # Get latest release version
 get_latest_version() {
-    
-    # Try to fetch from GitHub API
+    # Try stable latest first
     if command -v curl >/dev/null 2>&1; then
         if [ -n "$GITHUB_TOKEN" ]; then
-            VERSION=$(curl -fsSL -H "Authorization: Bearer $GITHUB_TOKEN" \
-                      "https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/releases/latest" | \
+            VERSION=$( { curl -fsSL -H "Authorization: Bearer $GITHUB_TOKEN" \
+                      "https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/releases/latest" 2>/dev/null || true; } | \
                       grep '"tag_name":' | \
+                      head -n 1 | \
                       sed -E 's/.*"tag_name": "([^"]+)".*/\1/')
         else
-            VERSION=$(curl -fsSL "https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/releases/latest" | \
+            VERSION=$( { curl -fsSL "https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/releases/latest" 2>/dev/null || true; } | \
                       grep '"tag_name":' | \
+                      head -n 1 | \
                       sed -E 's/.*"tag_name": "([^"]+)".*/\1/')
         fi
     elif command -v wget >/dev/null 2>&1; then
         if [ -n "$GITHUB_TOKEN" ]; then
             VERSION=$(wget --header="Authorization: Bearer $GITHUB_TOKEN" \
-                      -qO- "https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/releases/latest" | \
+                      -qO- "https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/releases/latest" 2>/dev/null | \
                       grep '"tag_name":' | \
+                      head -n 1 | \
                       sed -E 's/.*"tag_name": "([^"]+)".*/\1/')
         else
-            VERSION=$(wget -qO- "https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/releases/latest" | \
+            VERSION=$(wget -qO- "https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/releases/latest" 2>/dev/null | \
                       grep '"tag_name":' | \
+                      head -n 1 | \
                       sed -E 's/.*"tag_name": "([^"]+)".*/\1/')
         fi
     else
         print_error "Neither curl nor wget found. Please install one of them."
         exit 1
+    fi
+
+    # Fallback for repos with no stable release (e.g. only prereleases)
+    if [ -z "$VERSION" ]; then
+        print_warning "No stable latest release found; falling back to newest release tag"
+
+        if command -v curl >/dev/null 2>&1; then
+            if [ -n "$GITHUB_TOKEN" ]; then
+                VERSION=$( { curl -fsSL -H "Authorization: Bearer $GITHUB_TOKEN" \
+                          "https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/releases?per_page=1" 2>/dev/null || true; } | \
+                          grep '"tag_name":' | \
+                          head -n 1 | \
+                          sed -E 's/.*"tag_name": "([^"]+)".*/\1/')
+            else
+                VERSION=$( { curl -fsSL "https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/releases?per_page=1" 2>/dev/null || true; } | \
+                          grep '"tag_name":' | \
+                          head -n 1 | \
+                          sed -E 's/.*"tag_name": "([^"]+)".*/\1/')
+            fi
+        elif command -v wget >/dev/null 2>&1; then
+            if [ -n "$GITHUB_TOKEN" ]; then
+                VERSION=$(wget --header="Authorization: Bearer $GITHUB_TOKEN" \
+                          -qO- "https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/releases?per_page=1" 2>/dev/null | \
+                          grep '"tag_name":' | \
+                          head -n 1 | \
+                          sed -E 's/.*"tag_name": "([^"]+)".*/\1/')
+            else
+                VERSION=$(wget -qO- "https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/releases?per_page=1" 2>/dev/null | \
+                          grep '"tag_name":' | \
+                          head -n 1 | \
+                          sed -E 's/.*"tag_name": "([^"]+)".*/\1/')
+            fi
+        fi
     fi
 
     if [ -z "$VERSION" ]; then
@@ -214,7 +250,7 @@ install_binary() {
     cd "$TEMP_DIR"
 
     # Construct archive name
-    ARCHIVE_NAME="${BINARY_NAME}_${VERSION}_${OS}_${ARCH}"
+    ARCHIVE_NAME="${REPO_NAME}_${VERSION}_${OS}_${ARCH}"
     if [ "$OS" = "windows" ]; then
         ARCHIVE_EXT="zip"
     else
