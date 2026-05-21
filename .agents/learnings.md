@@ -113,3 +113,10 @@ This document tracks key technical decisions and lessons learned during the deve
 - Use switch statements on `runtime.GOOS` for clean OS-specific behavior
 - Fail gracefully on unsupported platforms with clear error messages
 - Don't assume tools are preinstalled - verify their presence first
+
+## 12. Release Publisher Governance Verification
+
+**Learning**:
+- For this repository, release publishing is controlled primarily by tag push permission because `.github/workflows/release.yml` triggers on `push.tags` (`v*.*.*`).
+- Verifying collaborator permission levels via `gh api repos/{owner}/{repo}/collaborators` is a practical baseline check.
+- On plan-limited private repos, ruleset/branch-protection endpoints may return 403, so governance verification should explicitly record that limitation in task notes.

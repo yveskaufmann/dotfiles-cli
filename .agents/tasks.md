@@ -42,4 +42,10 @@
 - [x] Rewrite `architecture.md` for humans and agents
 - [x] Polish human-facing `README.md`
 - [x] Split provider docs into one page per provider
-- [ ] Verify release publisher restrictions (only authorized maintainers can publish)
+- [x] Verify release publisher restrictions (only authorized maintainers can publish)
+
+Verification notes (2026-05-21):
+- Direct collaborator permissions show only `yveskaufmann` with admin/maintain/push.
+- Release workflow is tag-triggered (`v*.*.*`), so publish requires tag push permission.
+- Actions permissions are enabled with `allowed_actions: all`.
+- Rulesets/branch protection API endpoints returned 403 due current repo plan limits.
