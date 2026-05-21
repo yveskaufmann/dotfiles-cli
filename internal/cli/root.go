@@ -9,9 +9,9 @@ import (
 var rootCmd = &cobra.Command{
 	Use:   "dotfiles",
 	Short: "Bootstrap dotfiles, install packages, and create symlinks",
-	Long: `DOTFILES - Yves Kaufmann - https://github.com/yveskaufmann/dotfiles
+	Long: `DOTFILES CLI - https://github.com/yveskaufmann/dotfiles-cli
 	
-This CLI tool bootstraps my dotfiles by symlinking files to the home directory
+This CLI tool bootstraps dotfiles by symlinking files to the home directory
 and installing/updating required packages.`,
 
 	Example: `  # Bootstrap your dotfiles (clone/pull repository, install tools, create symlinks)

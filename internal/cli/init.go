@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/spf13/cobra"
-	executor "yv35.com/dotfiles/internal/engine"
+	executor "yv35.com/dotfiles-cli/internal/engine"
 )
 
 var (

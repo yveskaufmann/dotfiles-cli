@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"yv35.com/dotfiles/internal/util/sh"
+	"yv35.com/dotfiles-cli/internal/util/sh"
 )
 
 // DownloadFile downloads a file from URL to a temporary location.

@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"regexp"
 
-	"yv35.com/dotfiles/internal/config"
+	"yv35.com/dotfiles-cli/internal/config"
 )
 
 type githubRelease struct {

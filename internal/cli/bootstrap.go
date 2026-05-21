@@ -7,9 +7,9 @@ import (
 	"strings"
 
 	"github.com/spf13/cobra"
-	executor "yv35.com/dotfiles/internal/engine"
-	"yv35.com/dotfiles/internal/theme"
-	"yv35.com/dotfiles/internal/tool/git"
+	executor "yv35.com/dotfiles-cli/internal/engine"
+	"yv35.com/dotfiles-cli/internal/theme"
+	"yv35.com/dotfiles-cli/internal/tool/git"
 )
 
 var bootstrapCmd = &cobra.Command{

@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"yv35.com/dotfiles/internal/util/archive"
+	"yv35.com/dotfiles-cli/internal/util/archive"
 )
 
 // installIDE downloads and installs the IDE, choosing the right strategy

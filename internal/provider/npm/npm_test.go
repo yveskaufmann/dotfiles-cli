@@ -3,7 +3,7 @@ package npm
 import (
 	"testing"
 
-	"yv35.com/dotfiles/internal/config"
+	"yv35.com/dotfiles-cli/internal/config"
 )
 
 func TestProvider_HasConfig(t *testing.T) {

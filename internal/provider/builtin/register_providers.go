@@ -1,20 +1,20 @@
 package builtin
 
 import (
-	"yv35.com/dotfiles/internal/provider"
-	"yv35.com/dotfiles/internal/provider/apt"
-	"yv35.com/dotfiles/internal/provider/binary"
-	"yv35.com/dotfiles/internal/provider/brew"
-	"yv35.com/dotfiles/internal/provider/custom"
-	"yv35.com/dotfiles/internal/provider/example"
-	"yv35.com/dotfiles/internal/provider/github"
-	"yv35.com/dotfiles/internal/provider/jetbrains"
-	"yv35.com/dotfiles/internal/provider/npm"
-	"yv35.com/dotfiles/internal/provider/nvm"
-	"yv35.com/dotfiles/internal/provider/pipx"
-	"yv35.com/dotfiles/internal/provider/script"
-	"yv35.com/dotfiles/internal/provider/sdkman"
-	"yv35.com/dotfiles/internal/provider/snap"
+	"yv35.com/dotfiles-cli/internal/provider"
+	"yv35.com/dotfiles-cli/internal/provider/apt"
+	"yv35.com/dotfiles-cli/internal/provider/binary"
+	"yv35.com/dotfiles-cli/internal/provider/brew"
+	"yv35.com/dotfiles-cli/internal/provider/custom"
+	"yv35.com/dotfiles-cli/internal/provider/example"
+	"yv35.com/dotfiles-cli/internal/provider/github"
+	"yv35.com/dotfiles-cli/internal/provider/jetbrains"
+	"yv35.com/dotfiles-cli/internal/provider/npm"
+	"yv35.com/dotfiles-cli/internal/provider/nvm"
+	"yv35.com/dotfiles-cli/internal/provider/pipx"
+	"yv35.com/dotfiles-cli/internal/provider/script"
+	"yv35.com/dotfiles-cli/internal/provider/sdkman"
+	"yv35.com/dotfiles-cli/internal/provider/snap"
 )
 
 func registerProviders() {

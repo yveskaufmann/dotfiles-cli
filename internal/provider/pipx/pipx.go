@@ -3,10 +3,10 @@ package pipx
 import (
 	"fmt"
 
-	"yv35.com/dotfiles/internal/config"
-	"yv35.com/dotfiles/internal/provider"
-	"yv35.com/dotfiles/internal/types"
-	"yv35.com/dotfiles/internal/util/sh"
+	"yv35.com/dotfiles-cli/internal/config"
+	"yv35.com/dotfiles-cli/internal/provider"
+	"yv35.com/dotfiles-cli/internal/types"
+	"yv35.com/dotfiles-cli/internal/util/sh"
 )
 
 type Provider struct{}

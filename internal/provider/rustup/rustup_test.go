@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"testing"
 
-	"yv35.com/dotfiles/internal/config"
-	"yv35.com/dotfiles/internal/types"
-	"yv35.com/dotfiles/internal/util/sh"
+	"yv35.com/dotfiles-cli/internal/config"
+	"yv35.com/dotfiles-cli/internal/types"
+	"yv35.com/dotfiles-cli/internal/util/sh"
 )
 
 func TestProvider_HasConfig(t *testing.T) {

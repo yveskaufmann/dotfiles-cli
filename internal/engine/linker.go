@@ -9,9 +9,9 @@ import (
 	"strings"
 
 	"golang.org/x/term"
-	"yv35.com/dotfiles/internal/theme"
-	"yv35.com/dotfiles/internal/util/pathutil"
-	"yv35.com/dotfiles/internal/util/stringutils"
+	"yv35.com/dotfiles-cli/internal/theme"
+	"yv35.com/dotfiles-cli/internal/util/pathutil"
+	"yv35.com/dotfiles-cli/internal/util/stringutils"
 )
 
 type FileLinkerOptions struct {

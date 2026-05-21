@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"path/filepath"
 
-	"yv35.com/dotfiles/internal/config"
-	"yv35.com/dotfiles/internal/theme"
-	"yv35.com/dotfiles/internal/tool/git"
-	"yv35.com/dotfiles/internal/util/fsutil"
-	"yv35.com/dotfiles/internal/util/pathutil"
+	"yv35.com/dotfiles-cli/internal/config"
+	"yv35.com/dotfiles-cli/internal/theme"
+	"yv35.com/dotfiles-cli/internal/tool/git"
+	"yv35.com/dotfiles-cli/internal/util/fsutil"
+	"yv35.com/dotfiles-cli/internal/util/pathutil"
 )
 
 // BootstrapOptions contains configuration options for the Bootstrapper

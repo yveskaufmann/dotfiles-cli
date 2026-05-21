@@ -1,6 +1,6 @@
 package types
 
-import "yv35.com/dotfiles/internal/config"
+import "yv35.com/dotfiles-cli/internal/config"
 
 type Provider interface {
 	// Identifier returns the unique identifier of the provider (e.g., "github", "gitlab").

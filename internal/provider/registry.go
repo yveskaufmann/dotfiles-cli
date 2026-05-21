@@ -3,7 +3,7 @@ package provider
 import (
 	"sort"
 
-	"yv35.com/dotfiles/internal/types"
+	"yv35.com/dotfiles-cli/internal/types"
 )
 
 var defaultProviders = []types.Provider{}

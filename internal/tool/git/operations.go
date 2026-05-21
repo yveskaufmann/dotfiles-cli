@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"yv35.com/dotfiles/internal/util/sh"
+	"yv35.com/dotfiles-cli/internal/util/sh"
 )
 
 // Clone clones a git repository from the given URL to the destination path

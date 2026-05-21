@@ -9,8 +9,8 @@ import (
 	"strings"
 	"text/template"
 
-	"yv35.com/dotfiles/internal/theme"
-	"yv35.com/dotfiles/internal/tool/git"
+	"yv35.com/dotfiles-cli/internal/theme"
+	"yv35.com/dotfiles-cli/internal/tool/git"
 )
 
 //go:embed templates/*

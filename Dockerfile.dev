@@ -19,7 +19,7 @@ RUN useradd -m -s /bin/bash user && \
 #     GITHUB_TOKEN=$(cat /run/secrets/github_token) && \
 #     curl -H "Authorization: Bearer $GITHUB_TOKEN" \
 #         -H "Accept: application/vnd.github.v3.raw" \
-#         -fsSL "https://api.github.com/repos/yveskaufmann/.dotfiles/contents/scripts/install.sh?ref=main" | sh
+#         -fsSL "https://api.github.com/repos/yveskaufmann/dotfiles-cli/contents/scripts/install.sh?ref=main" | sh
 
 RUN echo "1"
 COPY scripts/install.sh /tmp/install.sh

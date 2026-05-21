@@ -3,8 +3,8 @@ package git
 import (
 	"fmt"
 
-	"yv35.com/dotfiles/internal/provider"
-	"yv35.com/dotfiles/internal/util/sh"
+	"yv35.com/dotfiles-cli/internal/provider"
+	"yv35.com/dotfiles-cli/internal/util/sh"
 )
 
 // Ensure will attempt to ensure that git is installed on the system.

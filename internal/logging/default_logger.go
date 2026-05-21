@@ -7,7 +7,7 @@ import (
 	"os/signal"
 	"path"
 
-	"yv35.com/dotfiles/internal/cli"
+	"yv35.com/dotfiles-cli/internal/cli"
 )
 
 func init() {

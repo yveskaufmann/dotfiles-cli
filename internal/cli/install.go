@@ -5,8 +5,8 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
-	"yv35.com/dotfiles/internal/config"
-	executor "yv35.com/dotfiles/internal/engine"
+	"yv35.com/dotfiles-cli/internal/config"
+	executor "yv35.com/dotfiles-cli/internal/engine"
 )
 
 var installCmd = &cobra.Command{

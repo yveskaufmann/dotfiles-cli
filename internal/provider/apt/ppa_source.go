@@ -8,9 +8,9 @@ import (
 	"strings"
 	"text/template"
 
-	"yv35.com/dotfiles/internal/config"
-	"yv35.com/dotfiles/internal/util/sh"
-	"yv35.com/dotfiles/internal/util/stringutils"
+	"yv35.com/dotfiles-cli/internal/config"
+	"yv35.com/dotfiles-cli/internal/util/sh"
+	"yv35.com/dotfiles-cli/internal/util/stringutils"
 )
 
 type PPASourceTemplateData struct {

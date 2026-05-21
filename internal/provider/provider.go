@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log/slog"
 
-	"yv35.com/dotfiles/internal/types"
+	"yv35.com/dotfiles-cli/internal/types"
 )
 
 func SetupProvider(provider types.Provider) error {

@@ -1,4 +1,4 @@
-module yv35.com/dotfiles
+module yv35.com/dotfiles-cli
 
 go 1.24.4
 

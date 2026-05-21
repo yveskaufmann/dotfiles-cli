@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"os"
 
-	"yv35.com/dotfiles/internal/config"
-	"yv35.com/dotfiles/internal/util/archive"
-	"yv35.com/dotfiles/internal/util/stringutils"
+	"yv35.com/dotfiles-cli/internal/config"
+	"yv35.com/dotfiles-cli/internal/util/archive"
+	"yv35.com/dotfiles-cli/internal/util/stringutils"
 )
 
 // installGithubRelease downloads and installs a GitHub release

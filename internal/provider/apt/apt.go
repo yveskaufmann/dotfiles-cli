@@ -7,10 +7,10 @@ import (
 	"path"
 	"strings"
 
-	"yv35.com/dotfiles/internal/config"
-	"yv35.com/dotfiles/internal/types"
-	"yv35.com/dotfiles/internal/util/osutil"
-	"yv35.com/dotfiles/internal/util/sh"
+	"yv35.com/dotfiles-cli/internal/config"
+	"yv35.com/dotfiles-cli/internal/types"
+	"yv35.com/dotfiles-cli/internal/util/osutil"
+	"yv35.com/dotfiles-cli/internal/util/sh"
 )
 
 type Provider struct {

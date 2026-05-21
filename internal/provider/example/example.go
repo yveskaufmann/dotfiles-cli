@@ -3,8 +3,8 @@ package example
 import (
 	"fmt"
 
-	"yv35.com/dotfiles/internal/config"
-	"yv35.com/dotfiles/internal/types"
+	"yv35.com/dotfiles-cli/internal/config"
+	"yv35.com/dotfiles-cli/internal/types"
 )
 
 type Provider struct{}

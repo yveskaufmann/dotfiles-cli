@@ -3,9 +3,9 @@ package apt
 import (
 	"fmt"
 
-	"yv35.com/dotfiles/internal/types"
-	"yv35.com/dotfiles/internal/util/sh"
-	"yv35.com/dotfiles/internal/util/stringutils"
+	"yv35.com/dotfiles-cli/internal/types"
+	"yv35.com/dotfiles-cli/internal/util/sh"
+	"yv35.com/dotfiles-cli/internal/util/stringutils"
 )
 
 func (p *Provider) isURL(s string) bool {

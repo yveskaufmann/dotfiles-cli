@@ -1,14 +1,14 @@
 #!/bin/sh
 # install.sh - Install dotfiles binary from GitHub releases
-# Usage: curl -fsSL https://raw.githubusercontent.com/yveskaufmann/.dotfiles/master/scripts/install.sh | sh
-# Usage with flags: curl -fsSL https://raw.githubusercontent.com/yveskaufmann/.dotfiles/master/scripts/install.sh | sh -s -- --home
-# Usage with token: curl -fsSL https://raw.githubusercontent.com/yveskaufmann/.dotfiles/master/scripts/install.sh | sh -s -- --github-token YOUR_TOKEN
+# Usage: curl -fsSL https://raw.githubusercontent.com/yveskaufmann/dotfiles-cli/main/scripts/install.sh | sh
+# Usage with flags: curl -fsSL https://raw.githubusercontent.com/yveskaufmann/dotfiles-cli/main/scripts/install.sh | sh -s -- --home
+# Usage with token: curl -fsSL https://raw.githubusercontent.com/yveskaufmann/dotfiles-cli/main/scripts/install.sh | sh -s -- --github-token YOUR_TOKEN
 
 set -e
 
 # Configuration
 REPO_OWNER="yveskaufmann"
-REPO_NAME=".dotfiles"
+REPO_NAME="dotfiles-cli"
 BINARY_NAME="dotfiles"
 INSTALL_DIR=""
 FORCE_HOME=false

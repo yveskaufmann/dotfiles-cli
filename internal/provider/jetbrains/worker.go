@@ -3,7 +3,7 @@ package jetbrains
 import (
 	"sync"
 
-	"yv35.com/dotfiles/internal/types"
+	"yv35.com/dotfiles-cli/internal/types"
 )
 
 // maxConcurrentDownloads limits parallel IDE downloads.  IDEs are large

@@ -5,8 +5,8 @@ import (
 	"log/slog"
 	"os"
 
-	"yv35.com/dotfiles/internal/config"
-	"yv35.com/dotfiles/internal/types"
+	"yv35.com/dotfiles-cli/internal/config"
+	"yv35.com/dotfiles-cli/internal/types"
 )
 
 // addPPASource adds the PPA source without installing packages

@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
-	"yv35.com/dotfiles/internal/types"
-	"yv35.com/dotfiles/internal/util/sh"
+	"yv35.com/dotfiles-cli/internal/types"
+	"yv35.com/dotfiles-cli/internal/util/sh"
 )
 
 func (p *Provider) batchInstallWithVerification(packages []string, onComplete types.OnTaskComplete) error {

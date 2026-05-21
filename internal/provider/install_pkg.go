@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"runtime"
 
-	"yv35.com/dotfiles/internal/config"
-	"yv35.com/dotfiles/internal/types"
+	"yv35.com/dotfiles-cli/internal/config"
+	"yv35.com/dotfiles-cli/internal/types"
 )
 
 type SystemPackageNames struct {
