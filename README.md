@@ -15,6 +15,17 @@
 - creates symlinks from `link/` into your home directory
 - keeps the bootstrap logic separate from your personal config
 
+## Install
+
+The installer script lives in this repository at `scripts/install.sh` and
+downloads the matching `dotfiles` binary from GitHub Releases.
+
+Installer command:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/yveskaufmann/dotfiles-cli/main/scripts/install.sh | sh
+```
+
 ## Build
 
 ```bash
