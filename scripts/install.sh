@@ -409,10 +409,8 @@ install_binary() {
 # Main
 main() {
     echo ""
-    echo "${CYAN}╔═══════════════════════════════════════════╗${NC}"
-    echo "${CYAN}║     Dotfiles Installer                    ║${NC}"
-    echo "${CYAN}║     github.com/${REPO_OWNER}/${REPO_NAME}     ║${NC}"
-    echo "${CYAN}╚═══════════════════════════════════════════╝${NC}"
+    echo "${CYAN}Dotfiles Installer${NC}"
+    echo "${CYAN}Repository: github.com/${REPO_OWNER}/${REPO_NAME}${NC}"
     echo ""
 
     install_binary
