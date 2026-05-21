@@ -108,5 +108,6 @@ Provider pages:
 - [Pipx](docs/providers/pipx.md)
 - [Snap](docs/providers/snap.md)
 - [JetBrains Toolbox](docs/providers/jetbrains.md)
+- [RustUp](docs/providers/rustup.md)
 - [Script](docs/providers/script.md)
 - [Custom](docs/providers/custom.md)

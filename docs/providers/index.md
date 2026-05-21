@@ -51,6 +51,7 @@ groups:
 - [Pipx](pipx.md)
 - [Snap](snap.md)
 - [JetBrains Toolbox](jetbrains.md)
+- [RustUp](rustup.md)
 - [Script](script.md)
 - [Custom](custom.md)
 
