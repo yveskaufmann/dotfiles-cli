@@ -29,7 +29,11 @@ graph TD
     D --> F[internal/config]
     D --> G[internal/provider]
     G --> H[Provider Registry]
-    H --> I[apt / brew / github / binary / snap / pipx / npm / nvm / sdkman / jetbrains / script / custom]
+    H --> I1[apt, brew]
+    H --> I2[github, binary]
+    H --> I3[nvm, sdkman]
+    H --> I4[snap, pipx, npm]
+    H --> I5[jetbrains, script, custom]
     B --> J[internal/logging]
 ```
 
@@ -54,6 +58,7 @@ flowchart TD
 
 ## Provider Priority Model
 
+Providers execute in priority order:
 - `10`: system package managers (`apt`, `brew`)
 - `50`: version managers (`nvm`, `sdkman`)
 - `100`: application installers and scripts (`github`, `binary`, `npm`, `pipx`, `snap`, `jetbrains`, `script`, `custom`)

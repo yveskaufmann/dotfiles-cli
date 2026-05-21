@@ -11,9 +11,9 @@ Installs snap packages.
 
 Object keys:
 
-| Key | Type | Required | Description |
-| :--- | :--- | :--- | :--- |
-| `name` | string | Yes | Snap package name. |
+| Key    | Type   | Required | Description        |
+| :----- | :----- | :------- | :----------------- |
+| `name` | string | Yes      | Snap package name. |
 
 ## Example
 

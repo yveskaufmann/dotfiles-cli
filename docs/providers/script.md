@@ -4,10 +4,10 @@ Runs external scripts from your repository.
 
 ## Configuration
 
-| Key | Type | Required | Description |
-| :--- | :--- | :--- | :--- |
-| `name` | string | Yes | Task label used in output. |
-| `script` | string | Yes | Script path relative to repository root. |
+| Key      | Type   | Required | Description                              |
+| :------- | :----- | :------- | :--------------------------------------- |
+| `name`   | string | Yes      | Task label used in output.               |
+| `script` | string | Yes      | Script path relative to repository root. |
 
 ## Example
 

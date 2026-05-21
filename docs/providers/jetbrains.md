@@ -4,11 +4,11 @@ Installs JetBrains IDEs through the JetBrains provider.
 
 ## Configuration
 
-| Key | Type | Required | Description |
-| :--- | :--- | :--- | :--- |
-| `ide` | string | Yes | IDE identifier used by the provider. |
-| `version` | string | No | Optional version selector. |
-| `name` | string | No | Optional display label. |
+| Key       | Type   | Required | Description                          |
+| :-------- | :----- | :------- | :----------------------------------- |
+| `ide`     | string | Yes      | IDE identifier used by the provider. |
+| `version` | string | No       | Optional version selector.           |
+| `name`    | string | No       | Optional display label.              |
 
 ## Example
 

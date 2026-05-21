@@ -6,11 +6,11 @@ Installs JVM ecosystem tools via SDKMAN.
 
 Each item supports one candidate and one or more versions:
 
-| Key | Type | Required | Description |
-| :--- | :--- | :--- | :--- |
-| `candidate` | string | No | SDKMAN candidate name (for example `java`, `maven`). |
-| `version` | string | No | Default version to install/use. |
-| `versions` | array | No | Additional versions to install. |
+| Key         | Type   | Required | Description                                          |
+| :---------- | :----- | :------- | :--------------------------------------------------- |
+| `candidate` | string | No       | SDKMAN candidate name (for example `java`, `maven`). |
+| `version`   | string | No       | Default version to install/use.                      |
+| `versions`  | array  | No       | Additional versions to install.                      |
 
 ## Example
 

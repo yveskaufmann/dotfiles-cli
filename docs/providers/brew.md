@@ -6,18 +6,18 @@ Installs packages and casks via Homebrew.
 
 `brew` items support object form:
 
-| Key | Type | Required | Description |
-| :--- | :--- | :--- | :--- |
-| `name` | string | Yes | Formula or cask name. |
-| `cask` | bool | No | Set to `true` for cask installs. |
+| Key    | Type   | Required | Description                      |
+| :----- | :----- | :------- | :------------------------------- |
+| `name` | string | Yes      | Formula or cask name.            |
+| `cask` | bool   | No       | Set to `true` for cask installs. |
 
 `brew_taps` is also supported to add taps and optional package sets:
 
-| Key | Type | Required | Description |
-| :--- | :--- | :--- | :--- |
-| `name` | string | Yes | Tap name. |
-| `url` | string | No | Optional custom tap URL. |
-| `pkgs` | array | No | Optional package list from this tap. |
+| Key    | Type   | Required | Description                          |
+| :----- | :----- | :------- | :----------------------------------- |
+| `name` | string | Yes      | Tap name.                            |
+| `url`  | string | No       | Optional custom tap URL.             |
+| `pkgs` | array  | No       | Optional package list from this tap. |
 
 ## Example
 

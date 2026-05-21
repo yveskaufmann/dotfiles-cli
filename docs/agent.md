@@ -36,3 +36,13 @@ This page is the shared baseline for agents working in this repository.
 2. Command run checks (`dotfiles version`, `dotfiles <cmd> --help`)
 3. Tests
 4. Release and distribution workflows
+
+## Repository Layout
+
+```text
+cmd/            CLI entry point
+internal/       bootstrap, install, link, config, providers, and utilities
+docs/           human-facing documentation
+.agents/        planning, tasks, and learnings for agent workflows
+tasks/          backlog notes
+```

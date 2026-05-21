@@ -11,9 +11,9 @@ Installs Python CLI tools with pipx.
 
 Object keys:
 
-| Key | Type | Required | Description |
-| :--- | :--- | :--- | :--- |
-| `name` | string | Yes | pipx package name. |
+| Key    | Type   | Required | Description        |
+| :----- | :----- | :------- | :----------------- |
+| `name` | string | Yes      | pipx package name. |
 
 ## Example
 

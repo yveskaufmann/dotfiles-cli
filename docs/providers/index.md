@@ -8,18 +8,18 @@ Each config file defines installation `groups`. A group can include one or more 
 
 Top-level keys:
 
-| Key | Type | Description |
-| :--- | :--- | :--- |
+| Key       | Type   | Description                               |
+| :-------- | :----- | :---------------------------------------- |
 | `$schema` | string | Optional schema path for YAML validation. |
-| `groups` | array | Ordered installation groups. |
+| `groups`  | array  | Ordered installation groups.              |
 
 Group keys:
 
-| Key | Type | Required | Description |
-| :--- | :--- | :--- | :--- |
-| `name` | string | Yes | Group identifier for logging and reporting. |
-| `profile` | string | No | Profile filter (for example `default`, `work`). |
-| `systems` | string | No | OS filter (for example `linux`, `darwin`). |
+| Key       | Type   | Required | Description                                     |
+| :-------- | :----- | :------- | :---------------------------------------------- |
+| `name`    | string | Yes      | Group identifier for logging and reporting.     |
+| `profile` | string | No       | Profile filter (for example `default`, `work`). |
+| `systems` | string | No       | OS filter (for example `linux`, `darwin`).      |
 
 Example:
 

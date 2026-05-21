@@ -7,7 +7,7 @@ It keeps executable logic separate from personal shell/config content.
 ## Motivation
 
 - Keep developer tooling reproducible across laptops, workstations, and fresh installs.
-- Manage tool setup declaratively (as YAML) so the same configuration applies across different OSes without manual duplication.
+- Manage tool setup declaratively (as YAML) so the same configuration applies across different operating systems without manual duplication.
 - Version control your tool setup in your own dotfiles repository, giving you a complete audit trail and easy rollback of configuration changes.
 - Reduce drift between machines by maintaining a single source of truth for tool versions and setup procedures.
 - Keep personal dotfiles and executable bootstrap logic in separate repositories for clean separation of concerns.
@@ -26,6 +26,36 @@ Dotfiles are configuration files for Unix tools (like `.bashrc`, `.gitconfig`, `
 - `bootstrap`: clones or updates the dotfiles repository into `$HOME/.dotfiles`
 - `install`: installs tools from declarative `init/*.yaml` groups
 - `link`: creates symlinks from `link/` into the home directory
+
+## Configuration Concepts
+
+Your dotfiles repository contains YAML files in `init/` that declaratively define which tools to install. Each file contains **groups** of tools grouped by install provider:
+
+```yaml
+groups:
+  - name: Essential Tools
+    profile: default
+    systems: [linux, macos]
+    apt:
+      - git
+      - curl
+    npm:
+      - eslint
+      - prettier
+
+  - name: Java Development
+    profile: java
+    sdkman:
+      - java: "21"
+      - maven: "3.9.0"
+```
+
+**Groups** are logical collections of tools that can be installed together. Each group can specify:
+- `profile`: which command profiles include this group (e.g., `dotfiles install --profile java`)
+- `systems`: which operating systems to apply to (linux, macos, etc.)
+- **Providers**: sections like `apt`, `npm`, `sdkman` that handle the actual installation
+
+**Providers** are the install mechanisms (package managers, version managers, GitHub releases). See [docs/providers/index.md](docs/providers/index.md) for complete provider list and configuration options.
 
 ## V1 Scope
 
@@ -81,13 +111,3 @@ Provider pages:
 - [JetBrains Toolbox](docs/providers/jetbrains.md)
 - [Script](docs/providers/script.md)
 - [Custom](docs/providers/custom.md)
-
-## Repository Layout
-
-```text
-cmd/            CLI entry point
-internal/       bootstrap, install, link, config, providers, and utilities
-docs/           human-facing documentation
-.agents/        planning, tasks, and learnings for agent workflows
-tasks/          backlog notes
-```

@@ -11,9 +11,9 @@ Installs global Node.js packages with npm.
 
 Object keys:
 
-| Key | Type | Required | Description |
-| :--- | :--- | :--- | :--- |
-| `name` | string | Yes | Global npm package name. |
+| Key    | Type   | Required | Description              |
+| :----- | :----- | :------- | :----------------------- |
+| `name` | string | Yes      | Global npm package name. |
 
 ## Example
 
