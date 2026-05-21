@@ -96,7 +96,9 @@ func FindBinaries(rootDir string, binaryNames []string) (map[string]string, erro
 }
 
 // InstallBinary moves a binary to target directory with proper permissions.
-// Auto-detects sudo requirement based on target path (outside $HOME).
+// Auto-detects sudo requirement based on target path (outside $HOME) and actual
+// write permission — handles the case where a previous root-owned file exists
+// inside $HOME (e.g. crane installed earlier via sudo).
 // If targetDir is empty, defaults to ~/bin.
 func InstallBinary(srcPath, targetDir, name string) error {
 	if targetDir == "" {
@@ -105,9 +107,16 @@ func InstallBinary(srcPath, targetDir, name string) error {
 
 	destPath := filepath.Join(targetDir, name)
 
-	// Autodetect if sudo is needed (if outside home)
+	// Primary heuristic: paths outside $HOME or sourced from /var require sudo.
 	homeDir := os.Getenv("HOME")
 	useSudo := !strings.HasPrefix(targetDir, homeDir) || strings.HasPrefix(srcPath, "/var")
+
+	// Secondary check: even when inside $HOME, an existing file owned by root
+	// (or a root-owned directory) will cause "permission denied". Verify we can
+	// actually write before committing to a no-sudo run.
+	if !useSudo {
+		useSudo = !isWritable(targetDir, destPath)
+	}
 
 	mkdirCmd := "mkdir -p"
 	moveCmd := "mv"
@@ -136,6 +145,40 @@ func InstallBinary(srcPath, targetDir, name string) error {
 
 	fmt.Printf("✅ Binary %s installed successfully to %s\n", name, destPath)
 	return nil
+}
+
+// isWritable returns true if the current process can write to destPath, or to
+// targetDir (or its nearest existing ancestor) when destPath does not yet exist.
+func isWritable(targetDir, destPath string) bool {
+	if _, err := os.Stat(destPath); err == nil {
+		f, err := os.OpenFile(destPath, os.O_WRONLY, 0)
+		if err != nil {
+			return false
+		}
+		f.Close()
+		return true
+	}
+	// Walk up to the nearest existing directory and probe with a temp file.
+	dir := targetDir
+	for dir != "" && dir != "." && dir != "/" {
+		info, err := os.Stat(dir)
+		if err != nil {
+			dir = filepath.Dir(dir)
+			continue
+		}
+		if !info.IsDir() {
+			return false
+		}
+		tmp := filepath.Join(dir, fmt.Sprintf(".dotfiles_write_test_%d", os.Getpid()))
+		f, err := os.Create(tmp)
+		if err != nil {
+			return false
+		}
+		f.Close()
+		os.Remove(tmp)
+		return true
+	}
+	return false
 }
 
 // IsArchive returns true if the file appears to be an archive based on extension.
