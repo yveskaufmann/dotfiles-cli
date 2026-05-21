@@ -1,37 +1,37 @@
 # dotfiles-cli
 
-`dotfiles-cli` is a Go-based bootstrap tool for installing developer tooling and linking dotfiles from a separate configuration repository.
+`dotfiles-cli` is a standalone Go CLI for keeping developer tools consistent and manageable
+across multiple machines and operating systems through declarative configuration.
+It keeps executable logic separate from personal shell/config content.
 
-## V1 Scope
+## Motivation
 
-- The local dotfiles workspace is fixed to `$HOME/.dotfiles`.
-- Repository source is generic and can be provided with `--repository`.
-- Configurable local paths are intentionally deferred to a later version.
+- Keep developer tooling reproducible across laptops, workstations, and fresh installs.
+- Manage tool setup declaratively so the same config can be applied on different OSes.
+- Reduce drift between machines by reusing one installation definition (`init/*.yaml`).
+- Keep personal dotfiles and executable bootstrap logic in separate repositories.
 
 ## What It Does
 
-- clones or updates a dotfiles repository
-- installs tools from declarative `init/*.yaml` files
-- creates symlinks from `link/` into your home directory
-- keeps the bootstrap logic separate from your personal config
+- `bootstrap`: clones or updates the dotfiles repository into `$HOME/.dotfiles`
+- `install`: installs tools from declarative `init/*.yaml` groups
+- `link`: creates symlinks from `link/` into the home directory
 
-## Install
+## V1 Scope
 
-The installer script lives in this repository at `scripts/install.sh` and
-downloads the matching `dotfiles` binary from GitHub Releases.
+- Local workspace path is fixed to `$HOME/.dotfiles`.
+- Repository source is configurable via `--repository`.
+- Custom local paths are intentionally deferred to a later version.
 
-Installer command:
+## Installation
+
+Install the latest release binary:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/yveskaufmann/dotfiles-cli/main/scripts/install.sh | sh
 ```
 
-## Build
-
-```bash
-make build
-./bin/dotfiles version
-```
+More details and uninstall instructions: [docs/INSTALL.md](docs/INSTALL.md)
 
 ## Usage
 
@@ -42,18 +42,42 @@ dotfiles install --profile default
 dotfiles link --dry-run
 ```
 
+## Build From Source
+
+```bash
+make build
+./bin/dotfiles version
+```
+
 ## Documentation
 
-- [Installation](docs/INSTALL.md)
 - [Architecture](architecture.md)
+- [Agent Documentation](docs/agent.md)
+- [Provider Configuration](docs/providers/index.md)
 - [Task Backlog](tasks/backlog.md)
+
+Provider pages:
+
+- [APT](docs/providers/apt.md)
+- [PPA](docs/providers/ppa.md)
+- [Brew](docs/providers/brew.md)
+- [GitHub Release](docs/providers/github.md)
+- [Binary](docs/providers/binary.md)
+- [NVM](docs/providers/nvm.md)
+- [SdkMan](docs/providers/sdkman.md)
+- [NPM](docs/providers/npm.md)
+- [Pipx](docs/providers/pipx.md)
+- [Snap](docs/providers/snap.md)
+- [JetBrains Toolbox](docs/providers/jetbrains.md)
+- [Script](docs/providers/script.md)
+- [Custom](docs/providers/custom.md)
 
 ## Repository Layout
 
 ```text
-cmd/        CLI entry point
-internal/    bootstrap, install, link, providers, and utilities
-docs/        CLI-focused documentation
-tasks/       tracking and backlog notes
-.devcontainer/  development container setup
+cmd/            CLI entry point
+internal/       bootstrap, install, link, config, providers, and utilities
+docs/           human-facing documentation
+.agents/        planning, tasks, and learnings for agent workflows
+tasks/          backlog notes
 ```

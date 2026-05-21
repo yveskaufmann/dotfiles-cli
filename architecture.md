@@ -1,23 +1,24 @@
-# Architecture Documentation
+# Architecture
 
-This repository contains the standalone Go CLI used to bootstrap dotfiles and install developer tools.
+This repository contains the standalone Go CLI that bootstraps dotfiles and tool installation from declarative YAML files.
 
-## Overview
+## Audience
 
-The CLI is intentionally small and structured around three core actions:
+- Humans: understand how commands map to behavior.
+- Agents: know where to change behavior and which docs to read first.
 
-1. `bootstrap` clones or updates the configuration repository.
-2. `install` reads YAML tool definitions from `init/*.yaml` and runs provider-backed installation steps.
-3. `link` creates symlinks from the configuration repository's `link/` directory into the user's home directory.
+## System Goal
 
-## Runtime Assumptions (V1)
+Keep executable bootstrap/install/link behavior in this repository, while user-specific shell and dotfile content lives in a separate dotfiles repository.
 
-- Local workspace path is fixed at `$HOME/.dotfiles`.
-- `bootstrap --repository <url>` explicitly selects the remote source.
-- Without `--repository`, bootstrap tries to reuse `origin` from the local `$HOME/.dotfiles` repository and prompts if none is available.
-- Local path customization is postponed to a later version.
+## V1 Runtime Assumptions
 
-## Main Components
+- Workspace path is fixed to `$HOME/.dotfiles`.
+- `bootstrap --repository <url>` explicitly selects the repository remote.
+- Without `--repository`, bootstrap attempts to reuse existing `origin` from local workspace.
+- Path customization is deferred to V2.
+
+## Component Map
 
 ```mermaid
 graph TD
@@ -27,19 +28,49 @@ graph TD
     B --> E[internal/engine/linker]
     D --> F[internal/config]
     D --> G[internal/provider]
-    G --> H[apt / brew / npm / pipx / nvm / sdkman]
-    B --> I[internal/logging]
-    I --> J[log file in repo workspace]
+    G --> H[Provider Registry]
+    H --> I[apt / brew / github / binary / snap / pipx / npm / nvm / sdkman / jetbrains / script / custom]
+    B --> J[internal/logging]
 ```
 
-## Execution Flow
+## Command-to-Engine Mapping
 
-1. The root command wires subcommands in `internal/cli`.
-2. Bootstrap resolves the target repository and workspace path.
-3. Installation loads YAML files from the configured init directory.
-4. Providers execute in priority order so system packages run before version managers.
-5. Linking uses the repository's `link/` directory as the source of truth.
+- `dotfiles bootstrap` -> `internal/engine/bootstrap`
+- `dotfiles install` -> `internal/engine/installer`
+- `dotfiles link` -> `internal/engine/linker`
 
-## Development Goal
+## Install Pipeline
 
-The long-term goal is to keep this repository focused on executable behavior, while the user-specific dotfiles repository stores configuration and shell content.
+```mermaid
+flowchart TD
+    A[Read init/*.yaml] --> B[Parse config groups]
+    B --> C[Apply profile and OS filters]
+    C --> D[Resolve providers from registry]
+    D --> E[Sort by provider priority]
+    E --> F[Run idempotency checks]
+    F --> G[Install missing tools]
+    G --> H[Report task result]
+```
+
+## Provider Priority Model
+
+- `10`: system package managers (`apt`, `brew`)
+- `50`: version managers (`nvm`, `sdkman`)
+- `100`: application installers and scripts (`github`, `binary`, `npm`, `pipx`, `snap`, `jetbrains`, `script`, `custom`)
+
+## Configuration Model
+
+- Root file key: `groups`
+- Each group can define one or more provider sections (`apt`, `github_release`, `binary`, etc.)
+- Group-level filters:
+  - `profile`: selects groups per profile
+  - `systems`: selects groups by OS
+
+See [docs/providers/index.md](docs/providers/index.md) for provider keys and examples.
+
+## Agent Navigation Guide
+
+- Start with [docs/agent.md](docs/agent.md)
+- Use this file for high-level architecture and boundaries
+- Use provider docs for config behavior details
+- Track execution work in `.agents/tasks.md`

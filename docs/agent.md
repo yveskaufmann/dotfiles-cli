@@ -1,38 +1,38 @@
-# Dotfiles CLI Agent
+# Dotfiles CLI Agent Guide
 
-This repository holds the executable side of the dotfiles bootstrapper.
+This page is the shared baseline for agents working in this repository.
 
-## Purpose
+## Project Basics
 
-The CLI handles orchestration only:
+- Project: standalone bootstrap CLI for dotfiles workflows
+- Goal: keep executable behavior here and personal shell/config in a separate dotfiles repository
+- Core commands: `bootstrap`, `install`, `link`
 
-- repository bootstrap
-- tool installation from YAML definitions
-- symlink creation
-- logging and provider execution
+## Source of Truth
 
-## Operating Rules
+- Human-facing project summary: [README.md](../README.md)
+- Architecture overview: [architecture.md](../architecture.md)
+- Provider configuration docs: [docs/providers/index.md](providers/index.md)
+- Agent coordination docs: [agents.md](../agents.md)
+- Claude-specific operating notes: [claude.md](../claude.md)
+- Active planning and learnings: [.agents/tasks.md](../.agents/tasks.md)
 
-1. Keep executable behavior in this repository.
-2. Keep personal configuration and shell content in the separate dotfiles repository.
-3. Validate changes with build and execution checks before reshaping repository boundaries.
-4. Use the task backlog to track remaining extraction work.
+## Repository Boundaries
 
-## Architecture Summary
+1. Keep command behavior and provider execution logic in this repository.
+2. Keep user-specific dotfiles content in the separate dotfiles repository.
+3. Prefer documentation updates alongside behavior changes.
 
-The code is organized around:
+## Working Protocol
 
-- `cmd/dotfiles` for the binary entry point
-- `internal/cli` for commands and flags
-- `internal/engine` for bootstrap/install/link orchestration
-- `internal/config` for YAML loading and validation
-- `internal/provider` for package manager integrations
+1. Read [agents.md](../agents.md) before implementing changes.
+2. Confirm architecture impact in [architecture.md](../architecture.md).
+3. Update provider docs when config behavior changes.
+4. Track progress and notes in `.agents/` files.
 
-## Validation Priority
+## Validation Order
 
-When working in this repository, validate in this order:
-
-1. build
-2. run
-3. tests
-4. only then adjust repository structure or distribution
+1. Build (`make build`)
+2. Command run checks (`dotfiles version`, `dotfiles <cmd> --help`)
+3. Tests
+4. Release and distribution workflows

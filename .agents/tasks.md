@@ -21,7 +21,7 @@
 
 - [x] Create `architecture.md` with Mermaid diagrams <!-- id: 4 -->
 - [x] Create `learnings.md` <!-- id: 5 -->
-- [x] Create configuration guides in `/docs/config/` <!-- id: 6 -->
+- [x] Create configuration guides in `/docs/providers/` <!-- id: 6 -->
   - [x] `index.md`
   - [x] `apt.md`
   - [x] `ppa.md`
@@ -33,3 +33,13 @@
 ## Completed
 
 - [x] Create `/tasks` folder and initial backlog
+
+## Public Readiness (Current)
+
+- [x] Consolidate planning docs under `.agents/`
+- [x] Add `agents.md` baseline for all agents
+- [x] Add `claude.md` linked from `agents.md`
+- [x] Rewrite `architecture.md` for humans and agents
+- [x] Polish human-facing `README.md`
+- [x] Split provider docs into one page per provider
+- [ ] Verify release publisher restrictions (only authorized maintainers can publish)
