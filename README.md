@@ -92,9 +92,8 @@ make build
 ## Documentation
 
 - [Architecture](architecture.md)
-- [Agent Documentation](docs/agent.md)
 - [Provider Configuration](docs/providers/index.md)
-- [Task Backlog](tasks/backlog.md)
+- [Installation Guide](docs/INSTALL.md)
 
 Provider pages:
 

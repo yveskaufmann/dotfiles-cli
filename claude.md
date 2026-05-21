@@ -14,7 +14,7 @@ Before finishing documentation work:
 
 1. Ensure README links resolve.
 2. Ensure `docs/providers/index.md` lists all documented providers.
-3. Ensure [docs/agent.md](docs/agent.md) references architecture and provider docs.
+3. Ensure [agents.md](agents.md) references architecture and provider docs.
 4. Ensure `.agents/` contains current task and learning notes.
 
 ## Release Safety Notes

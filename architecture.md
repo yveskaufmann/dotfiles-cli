@@ -75,7 +75,7 @@ See [docs/providers/index.md](docs/providers/index.md) for provider keys and exa
 
 ## Agent Navigation Guide
 
-- Start with [docs/agent.md](docs/agent.md)
+- Start with [agents.md](agents.md)
 - Use this file for high-level architecture and boundaries
 - Use provider docs for config behavior details
 - Track execution work in `.agents/tasks.md`
