@@ -27,6 +27,14 @@ dotfiles install --profile default
 dotfiles link --dry-run
 ```
 
+## Uninstall
+
+`dotfiles` is a single binary. Remove it with:
+
+```bash
+rm "$(where dotfiles)"
+```
+
 ## V1 Path Convention
 
 For V1, the CLI expects dotfiles content at `$HOME/.dotfiles`.
