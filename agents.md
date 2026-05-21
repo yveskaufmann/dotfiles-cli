@@ -30,6 +30,15 @@ When behavior changes, update:
 2. [docs/providers](docs/providers/index.md) pages for config changes
 3. [docs/agent.md](docs/agent.md) for workflow impact
 
+## Task and Learning Tracking
+
+Agents MUST record their work in the `.agents/` folder:
+
+- **`.agents/tasks.md`**: Record todos, in-progress work, and completed tasks. Update task status (todo → in-progress → done) as you progress. Start every session by reviewing open tasks here.
+- **`.agents/learnings.md`**: Record technical insights, patterns that work/don't work, and discoveries about the codebase. Append new learnings at the end; do not overwrite existing entries.
+
+This ensures continuity across agent sessions and helps future agents understand the project evolution.
+
 ## Validation Sequence
 
 1. Build

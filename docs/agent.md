@@ -28,7 +28,8 @@ This page is the shared baseline for agents working in this repository.
 1. Read [agents.md](../agents.md) before implementing changes.
 2. Confirm architecture impact in [architecture.md](../architecture.md).
 3. Update provider docs when config behavior changes.
-4. Track progress and notes in `.agents/` files.
+4. Record all todos in [`.agents/tasks.md`](../.agents/tasks.md). Update task status (todo → in-progress → done) as you work.
+5. Record technical insights, patterns, and discoveries in [`.agents/learnings.md`](../.agents/learnings.md) for continuity across sessions.
 
 ## Provider Changes
 
