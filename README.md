@@ -26,6 +26,7 @@ Dotfiles are configuration files for Unix tools (like `.bashrc`, `.gitconfig`, `
 - `bootstrap`: clones or updates the dotfiles repository into `$HOME/.dotfiles`
 - `install`: installs tools from declarative `init/*.yaml` groups
 - `link`: creates symlinks from `link/` into the home directory
+- `self-update`: updates the CLI itself to the latest GitHub release
 
 ## Configuration Concepts
 
@@ -80,7 +81,24 @@ dotfiles bootstrap
 dotfiles bootstrap --repository git@github.com:user/dotfiles.git
 dotfiles install --profile default
 dotfiles link --dry-run
+dotfiles self-update
 ```
+
+## Keeping the CLI Up to Date
+
+Run `dotfiles self-update` at any time to upgrade to the latest release:
+
+```bash
+$ dotfiles self-update
+🔍 Checking for updates...
+🆕 New version available: v1.1.0 (current: v1.0.1)
+⬇️  Downloading https://github.com/yveskaufmann/dotfiles-cli/releases/download/v1.1.0/dotfiles-cli_1.1.0_linux_amd64.tar.gz...
+📦 Extracting archive...
+✅ Binary dotfiles installed successfully to /usr/local/bin/dotfiles
+🎉 Updated to v1.1.0
+```
+
+The command detects whether the current binary location requires elevated permissions and escalates to `sudo` automatically if needed.
 
 ## Build From Source
 
