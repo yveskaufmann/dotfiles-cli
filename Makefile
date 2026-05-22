@@ -1,4 +1,4 @@
-.SHELL := /usr/bin/env bash
+SHELL := /usr/bin/env bash
  
 BINARY_NAME := dotfiles
 VERSION ?= $(shell git describe --tags --always --dirty 2>/dev/null || echo "dev")
